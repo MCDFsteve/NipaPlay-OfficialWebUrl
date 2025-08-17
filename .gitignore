@@ -1,0 +1,5 @@
+# Assets downloaded by cache_assets.sh
+/assets/
+
+# Release binaries downloaded by fetch_releases.py
+/releases/

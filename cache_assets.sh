@@ -69,4 +69,8 @@ for asset in "${ASSETS_TO_CACHE[@]}"; do
     fi
 done
 
+echo "--- Caching Contribution Guides ---"
+python3 /www/wwwroot/nipaplay.aimes-soft.com/fetch_guides.py
+echo "--- Contribution Guides Caching Finished ---"
+
 echo "--- Asset Caching Finished ---"

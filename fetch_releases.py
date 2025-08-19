@@ -32,14 +32,7 @@ def run_git_command(command):
         # Ensure the command is a list of strings
         git_command = ["git"] + command
         print(f"Running Git command: {' '.join(git_command)}")
-        result = subprocess.run(
-            git_command,
-            cwd=PROJECT_DIR,
-            capture_output=True,
-            text=True,
-            check=True,
-            encoding='utf-8'
-        )
+        result = # subprocess.run(["git", "pull"], check=True)
         if result.stdout:
             print(result.stdout)
         if result.stderr:

@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文档 - NipaPlay</title>
+    <meta name="description" content="NipaPlay 项目文档，包含使用指南与贡献说明。">
+    <style>
+:root {
+    --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+    
+    /* Light Theme */
+    --bg-color-light: #f5f5f5;
+    --bg-secondary-color-light: #ffffff;
+    --text-color-light: #1a1a1a;
+    --text-secondary-color-light: #5a5a5a;
+    --accent-color-light: #0078d4;
+    --accent-hover-color-light: #005a9e;
+    --border-color-light: #e0e0e0;
+    --shadow-color-light: rgba(0, 0, 0, 0.08);
+
+    /* Dark Theme */
+    --bg-color-dark: #1a1a1a;
+    --bg-secondary-color-dark: #2c2c2c;
+    --text-color-dark: #f5f5f5;
+    --text-secondary-color-dark: #a0a0a0;
+    --accent-color-dark: #2894ff;
+    --accent-hover-color-dark: #50a8ff;
+    --border-color-dark: #404040;
+    --shadow-color-dark: rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="light"] {
+    --bg-color: var(--bg-color-light);
+    --bg-secondary-color: var(--bg-secondary-color-light);
+    --text-color: var(--text-color-light);
+    --text-secondary-color: var(--text-secondary-color-light);
+    --accent-color: var(--accent-color-light);
+    --accent-hover-color: var(--accent-hover-color-light);
+    --border-color: var(--border-color-light);
+    --shadow-color: var(--shadow-color-light);
+}
+
+[data-theme="dark"] {
+    --bg-color: var(--bg-color-dark);
+    --bg-secondary-color: var(--bg-secondary-color-dark);
+    --text-color: var(--text-color-dark);
+    --text-secondary-color: var(--text-secondary-color-dark);
+    --accent-color: var(--accent-color-dark);
+    --accent-hover-color: var(--accent-hover-color-dark);
+    --border-color: var(--border-color-dark);
+    --shadow-color: var(--shadow-color-dark);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+    font-family: var(--font-family);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
+    line-height: 1.6;
+}
+a { color: var(--accent-color); text-decoration: none; transition: color 0.2s ease; }
+a:hover { color: var(--accent-hover-color); }
+
+.main-header {
+    position: sticky; top: 0; width: 100%; z-index: 1000;
+    background-color: color-mix(in srgb, var(--bg-color) 80%, transparent);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border-color);
+}
+.main-nav {
+    display: flex; justify-content: space-between; align-items: center;
+    max-width: 1400px; margin: 0 auto; padding: 1rem 2rem;
+}
+.logo { display: flex; align-items: center; gap: 0.5rem; font-size: 1.5rem; font-weight: bold; color: var(--text-color); }
+.logo img { height: 32px; width: 32px; }
+.nav-right { display: flex; align-items: center; gap: 2rem; }
+.nav-links { display: flex; gap: 2rem; }
+.nav-links a { color: var(--text-secondary-color); font-weight: 500; }
+.nav-links a:hover { color: var(--text-color); }
+.nav-actions { display: flex; align-items: center; gap: 1rem; }
+.theme-toggle {
+    background: none; border: none; color: var(--text-color); font-size: 1.5rem; cursor: pointer;
+    padding: 0.25rem; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+}
+.theme-toggle:hover { background-color: var(--border-color); }
+
+.guide-container { display: flex; max-width: 1400px; margin: 0 auto; padding: 2rem; }
+.guide-sidebar {
+    flex: 0 0 280px; position: sticky; top: 70px; /* Adjusted for header height */
+    height: calc(100vh - 70px); overflow-y: auto; padding-right: 2rem;
+    border-right: 1px solid var(--border-color);
+}
+.guide-sidebar h3 { font-size: 1.2rem; margin-bottom: 1rem; color: var(--text-color); }
+.guide-nav { list-style: none; }
+.guide-nav a {
+    display: block; padding: 0.6rem 1rem; border-radius: 6px;
+    color: var(--text-secondary-color); font-weight: 500; margin-bottom: 0.5rem;
+}
+.guide-nav a:hover { background-color: var(--border-color); color: var(--text-color); }
+.guide-nav a.active { background-color: var(--accent-color); color: white; }
+.guide-nav a.active:hover { background-color: var(--accent-hover-color); color: white; }
+
+.guide-content { flex: 1; padding-left: 3rem; min-width: 0; }
+.guide-content-inner { max-width: 800px; }
+.guide-content-inner h1, .guide-content-inner h2, .guide-content-inner h3 {
+    margin-top: 2rem; margin-bottom: 1rem; padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+.guide-content-inner h1 { font-size: 2.5rem; }
+.guide-content-inner h2 { font-size: 2rem; }
+.guide-content-inner h3 { font-size: 1.5rem; }
+.guide-content-inner p { margin-bottom: 1rem; line-height: 1.7; }
+.guide-content-inner ul, .guide-content-inner ol { margin-bottom: 1rem; padding-left: 1.5rem; }
+.guide-content-inner li { margin-bottom: 0.5rem; }
+.guide-content-inner code {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+    background-color: var(--bg-secondary-color); padding: 0.2em 0.4em;
+    margin: 0; font-size: 85%; border-radius: 6px;
+}
+.guide-content-inner pre {
+    background-color: var(--bg-secondary-color); border: 1px solid var(--border-color);
+    border-radius: 6px; padding: 1rem; margin-bottom: 1rem; overflow-x: auto;
+}
+.guide-content-inner pre code { padding: 0; margin: 0; font-size: inherit; background: none; }
+.guide-content-inner blockquote {
+    border-left: 4px solid var(--accent-color); padding-left: 1rem;
+    margin: 1.5rem 0; color: var(--text-secondary-color);
+}
+.guide-content-inner table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; }
+.guide-content-inner th, .guide-content-inner td { border: 1px solid var(--border-color); padding: 0.75rem; text-align: left; }
+.guide-content-inner th { background-color: var(--bg-secondary-color); }
+
+.main-footer { padding: 2rem 0; border-top: 1px solid var(--border-color); }
+.footer-content {
+    max-width: 1400px; margin: 0 auto; padding: 0 2rem;
+    display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem;
+}
+.footer-content p { color: var(--text-secondary-color); }
+.footer-links { display: flex; gap: 1.5rem; }
+.footer-links a { color: var(--text-secondary-color); }
+.footer-links a:hover { color: var(--text-color); }
+
+@media (max-width: 992px) {
+    .guide-container { flex-direction: column; }
+    .guide-sidebar {
+        position: static; height: auto; width: 100%; border-right: none;
+        border-bottom: 1px solid var(--border-color); padding-right: 0;
+        margin-bottom: 2rem; overflow-y: visible;
+    }
+    .guide-content { padding-left: 0; }
+}
+    </style>
+    <link rel="icon" href="assets/icon.webp" type="image/webp">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" id="hljs-theme-dark">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" id="hljs-theme-light" disabled>
+    <style>
+        /* Tweaks for highlight.js */
+        .guide-content-inner pre code.hljs {
+            padding: 1em;
+            border-radius: 6px;
+        }
+        [data-theme="light"] .guide-content-inner pre code.hljs {
+            background: #f6f8fa;
+            color: #24292e;
+        }
+        [data-theme="dark"] .guide-content-inner pre code.hljs {
+            background: #2c2c2c;
+            color: #f5f5f5;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="main-header">
+        <nav class="main-nav">
+            <a href="index.html" class="logo">
+                <img src="assets/icon.webp" alt="NipaPlay Icon">
+                <span>NipaPlay</span>
+            </a>
+            <div class="nav-right">
+                <div class="nav-links">
+                    <a href="index.html#features">功能特性</a>
+                    <a href="index.html#gallery">软件截图</a>
+                    <a href="docs.html?type=documentation">使用文档</a>
+                    <a href="docs.html?type=contributing_guide">贡献指南</a>
+                    <a href="https://github.com/MCDFsteve/NipaPlay-Reload" target="_blank">项目地址</a>
+                </div>
+                <div class="nav-actions">
+                    <button id="theme-toggle" class="theme-toggle" aria-label="切换日间/夜间模式">
+                        <i class="ri-sun-line"></i>
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="guide-container">
+        <aside class="guide-sidebar">
+            <h3 id="guide-title">导航</h3>
+            <ul id="guide-nav" class="guide-nav"></ul>
+        </aside>
+        <section class="guide-content">
+            <div id="guide-content-inner" class="guide-content-inner">
+                <p>正在加载文档...</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="main-footer">
+        <div class="footer-content">
+            <p>&copy; 2025 NipaPlay. All Rights Reserved. Developed by <a href="http://www.aimes-soft.com" target="_blank">Aimes Soft</a>.</p>
+            <div class="footer-links">
+                <a href="https://github.com/MCDFsteve/NipaPlay-Reload" target="_blank">GitHub</a>
+                <a href="https://github.com/MCDFsteve/NipaPlay-Reload/issues" target="_blank">问题反馈</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/dart.min.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = themeToggle.querySelector('i');
+        const docElement = document.documentElement;
+        const guideNav = document.getElementById('guide-nav');
+        const guideContent = document.getElementById('guide-content-inner');
+        const guideTitle = document.getElementById('guide-title');
+        const hljsThemeDark = document.getElementById('hljs-theme-dark');
+        const hljsThemeLight = document.getElementById('hljs-theme-light');
+
+        let guidesData = [];
+        let currentGuideId = null;
+
+        const setTheme = (theme) => {
+            docElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+            themeIcon.className = theme === 'dark' ? 'ri-moon-line' : 'ri-sun-line';
+            hljsThemeDark.disabled = theme === 'light';
+            hljsThemeLight.disabled = theme === 'dark';
+        };
+
+        const renderGuide = (guideId, anchorId) => {
+            if (currentGuideId === guideId) {
+                // Guide is already rendered, just scroll to anchor
+                if (anchorId) scrollToAnchor(anchorId);
+                return;
+            }
+
+            const guide = guidesData.find(g => g.id === guideId);
+            if (guide) {
+                currentGuideId = guide.id;
+                guideContent.innerHTML = marked.parse(guide.content);
+                guideContent.querySelectorAll('pre code').forEach((block) => {
+                    hljs.highlightElement(block);
+                });
+                updateActiveLink(guideId);
+
+                if (anchorId) {
+                    scrollToAnchor(anchorId);
+                } else {
+                    window.scrollTo(0, 0);
+                }
+            }
+        };
+        
+        const scrollToAnchor = (anchorId) => {
+            setTimeout(() => {
+                // marked.js sanitizes header text to create IDs.
+                // e.g., "# Player Core Choice" -> id="player-core-choice"
+                // The anchorId from the link needs to be sanitized the same way.
+                const element = document.getElementById(anchorId);
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else {
+                    // Fallback for non-sanitized anchors, just in case
+                    const sanitized = anchorId.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-');
+                    const element2 = document.getElementById(sanitized);
+                    if(element2) element2.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 150);
+        };
+
+        const updateActiveLink = (activeId) => {
+            guideNav.querySelectorAll('a').forEach(link => {
+                link.classList.toggle('active', link.dataset.id === activeId);
+            });
+        };
+
+        const populateNav = () => {
+            if (!guidesData || guidesData.length === 0) return;
+            guideNav.innerHTML = '';
+            guidesData.forEach(guide => {
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = `#${guide.id}`;
+                a.textContent = guide.name;
+                a.dataset.id = guide.id;
+                li.appendChild(a);
+                guideNav.appendChild(li);
+            });
+        };
+
+        const handleNavigation = () => {
+            const fullHash = window.location.hash.substring(1);
+            if (!fullHash) {
+                const firstGuideId = guidesData.length > 0 ? guidesData[0].id : '';
+                if (firstGuideId) window.location.hash = `#${firstGuideId}`;
+                return;
+            }
+
+            const hashParts = fullHash.split('#');
+            const guideId = hashParts[0];
+            const anchorId = hashParts.length > 1 ? hashParts[1] : null;
+            
+            renderGuide(guideId, anchorId);
+        };
+
+        const initPage = (data, docType) => {
+            guidesData = data[docType];
+            if (!guidesData) throw new Error(`Documentation type '${docType}' not found`);
+            
+            const titles = { documentation: '使用文档', contributing_guide: '贡献指南' };
+            const pageTitle = titles[docType] || '文档';
+            document.title = `${pageTitle} - NipaPlay`;
+            guideTitle.textContent = pageTitle;
+
+            populateNav();
+            handleNavigation();
+        };
+
+        const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        setTheme(savedTheme);
+
+        fetch('guides.json')
+            .then(response => { if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`); return response.json(); })
+            .then(data => {
+                const urlParams = new URLSearchParams(window.location.search);
+                const docType = urlParams.get('type') || 'documentation';
+                initPage(data, docType);
+            })
+            .catch(error => {
+                console.error("Error loading documentation:", error);
+                guideContent.innerHTML = '<h1>文档加载失败</h1><p>无法获取文档内容，请检查 `guides.json` 文件是否存在或网络连接是否正常。</p>';
+            });
+
+        window.addEventListener('hashchange', handleNavigation);
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = docElement.getAttribute('data-theme');
+            setTheme(currentTheme === 'dark' ? 'light' : 'dark');
+        });
+    });
+    </script>
+</body>
+</html>

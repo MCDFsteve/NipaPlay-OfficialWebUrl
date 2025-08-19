@@ -1,65 +1,65 @@
 [
     {
-        "name": "NipaPlay-1.4.34-Android-arm64.apk",
-        "version": "v1.4.34",
+        "name": "NipaPlay-1.4.35-Android-arm64.apk",
+        "version": "v1.4.35",
         "os": "Android",
         "icon": "ri-android-fill",
-        "path": "releases/NipaPlay-1.4.34-Android-arm64.apk"
+        "path": "releases/NipaPlay-1.4.35-Android-arm64.apk"
     },
     {
-        "name": "NipaPlay-1.4.34-Linux-amd64.AppImage",
-        "version": "v1.4.34",
+        "name": "NipaPlay-1.4.35-Linux-amd64.AppImage",
+        "version": "v1.4.35",
         "os": "Linux",
         "icon": "ri-ubuntu-fill",
-        "path": "releases/NipaPlay-1.4.34-Linux-amd64.AppImage"
+        "path": "releases/NipaPlay-1.4.35-Linux-amd64.AppImage"
     },
     {
-        "name": "NipaPlay-1.4.34-Linux-amd64.deb",
-        "version": "v1.4.34",
+        "name": "NipaPlay-1.4.35-Linux-amd64.deb",
+        "version": "v1.4.35",
         "os": "Linux",
         "icon": "ri-ubuntu-fill",
-        "path": "releases/NipaPlay-1.4.34-Linux-amd64.deb"
+        "path": "releases/NipaPlay-1.4.35-Linux-amd64.deb"
     },
     {
-        "name": "NipaPlay-1.4.34-Linux-amd64.rpm",
-        "version": "v1.4.34",
+        "name": "NipaPlay-1.4.35-Linux-amd64.rpm",
+        "version": "v1.4.35",
         "os": "Linux",
         "icon": "ri-ubuntu-fill",
-        "path": "releases/NipaPlay-1.4.34-Linux-amd64.rpm"
+        "path": "releases/NipaPlay-1.4.35-Linux-amd64.rpm"
     },
     {
-        "name": "NipaPlay-1.4.34-Linux-amd64.tar.gz",
-        "version": "v1.4.34",
+        "name": "NipaPlay-1.4.35-Linux-amd64.tar.gz",
+        "version": "v1.4.35",
         "os": "Linux",
         "icon": "ri-ubuntu-fill",
-        "path": "releases/NipaPlay-1.4.34-Linux-amd64.tar.gz"
+        "path": "releases/NipaPlay-1.4.35-Linux-amd64.tar.gz"
     },
     {
-        "name": "NipaPlay_1.4.34_iOS_arm64.ipa",
-        "version": "v1.4.34",
+        "name": "NipaPlay_1.4.35_iOS_arm64.ipa",
+        "version": "v1.4.35",
         "os": "iOS",
         "icon": "ri-apple-fill",
-        "path": "releases/NipaPlay_1.4.34_iOS_arm64.ipa"
+        "path": "releases/NipaPlay_1.4.35_iOS_arm64.ipa"
     },
     {
-        "name": "NipaPlay_1.4.34_macOS_Universal.dmg",
-        "version": "v1.4.34",
+        "name": "NipaPlay_1.4.35_macOS_Universal.dmg",
+        "version": "v1.4.35",
         "os": "macOS",
         "icon": "ri-apple-fill",
-        "path": "releases/NipaPlay_1.4.34_macOS_Universal.dmg"
+        "path": "releases/NipaPlay_1.4.35_macOS_Universal.dmg"
     },
     {
-        "name": "NipaPlay_1.4.34_Windows_x64.zip",
-        "version": "v1.4.34",
+        "name": "NipaPlay_1.4.35_Windows_x64.zip",
+        "version": "v1.4.35",
         "os": "Windows",
         "icon": "ri-window-fill",
-        "path": "releases/NipaPlay_1.4.34_Windows_x64.zip"
+        "path": "releases/NipaPlay_1.4.35_Windows_x64.zip"
     },
     {
-        "name": "NipaPlay_1.4.34_Windows_x64_Setup.exe",
-        "version": "v1.4.34",
+        "name": "NipaPlay_1.4.35_Windows_x64_Setup.exe",
+        "version": "v1.4.35",
         "os": "Windows",
         "icon": "ri-window-fill",
-        "path": "releases/NipaPlay_1.4.34_Windows_x64_Setup.exe"
+        "path": "releases/NipaPlay_1.4.35_Windows_x64_Setup.exe"
     }
 ]

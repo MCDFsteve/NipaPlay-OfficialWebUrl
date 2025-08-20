@@ -738,11 +738,26 @@ document.addEventListener('DOMContentLoaded', () => {
         if (event.target === modal) closeModal();
     });
 
-    openPrivacyModalButton.addEventListener('click', openPrivacyModal);
+    openPrivacyModalButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        openPrivacyModal();
+    });
     closePrivacyModalButton.addEventListener('click', closePrivacyModal);
     privacyModal.addEventListener('click', (event) => {
         if (event.target === privacyModal) closePrivacyModal();
     });
+
+    // Handle hash for privacy policy
+    const checkHashForPrivacy = () => {
+        if (window.location.hash === '#privacy') {
+            openPrivacyModal();
+        }
+    };
+
+    // Check on initial load
+    checkHashForPrivacy();
+    // Listen for hash changes
+    window.addEventListener('hashchange', checkHashForPrivacy);
 
     navToggle.addEventListener('click', toggleNav);
 

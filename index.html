@@ -297,6 +297,52 @@ section {
 .footer-links { display: flex; gap: 1.5rem; }
 .footer-links a { color: var(--text-secondary-color); transition: color 0.3s ease; }
 .footer-links a:hover { color: var(--text-color); }
+
+.os-download-instructions {
+    margin-top: 2rem;
+    border-top: 1px solid var(--border-color);
+    padding-top: 1.5rem;
+}
+.os-download-instructions h3 {
+    margin-bottom: 1.5rem;
+    font-size: 1.4rem;
+    text-align: center;
+}
+.os-section {
+    margin-bottom: 1.5rem;
+}
+.os-section h4 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+    font-size: 1.1rem;
+}
+.os-section h4 i {
+    font-size: 1.3rem;
+    color: var(--text-secondary-color);
+}
+.os-section p {
+    margin-bottom: 0.5rem;
+    color: var(--text-secondary-color);
+}
+.os-section pre {
+    background-color: var(--bg-color);
+    padding: 0.8rem;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    margin-bottom: 1rem;
+}
+.os-section code {
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+    font-size: 0.9rem;
+    color: var(--text-color);
+}
+.os-section .cta-button {
+    margin-top: 0.5rem;
+}
 .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); display: flex; justify-content: center; align-items: center; z-index: 2000; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; }
 .modal-overlay.is-visible { opacity: 1; visibility: visible; }
 .modal-content { background-color: var(--bg-secondary-color); padding: 2rem; border-radius: 12px; width: 90%; max-width: 600px; max-height: 80vh; overflow-y: auto; transform: scale(0.95); transition: transform 0.3s ease; }
@@ -311,6 +357,36 @@ section {
 .download-info { flex-grow: 1; }
 .download-info span { display: block; font-weight: 500; }
 .download-info small { color: var(--text-secondary-color); }
+
+.download-container {
+    display: block;
+}
+
+@media (min-width: 768px) {
+    .modal-content {
+        max-width: 860px; /* Increase max-width for two columns */
+    }
+    .download-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        align-items: start;
+    }
+    .os-download-instructions {
+        margin-top: 0;
+        border-top: none;
+        padding-top: 0;
+        border-left: 1px solid var(--border-color);
+        padding-left: 2rem;
+        height: 100%;
+    }
+}
+
+.download-main-list h3 {
+    margin-bottom: 1.5rem;
+    font-size: 1.4rem;
+    text-align: center;
+}
 
 /* Responsive Design */
 @media (max-width: 992px) {
@@ -638,8 +714,49 @@ document.addEventListener('DOMContentLoaded', () => {
             modalBody.innerHTML = `<p>加载版本信息失败，请稍后重试或直接访问 <a href="https://github.com/MCDFsteve/NipaPlay-Reload/releases">GitHub Releases</a> 页面。</p>`;
             return;
         }
+
+        let otherDownloadsHtml = `
+            <div class="os-download-instructions">
+                <h3>其他安装方式</h3>
+                
+                <div class="os-section">
+                    <h4><i class="ri-apple-fill"></i> macOS (Homebrew)</h4>
+                    <p>添加我们的软件源 (Tap):</p>
+                    <pre><code>brew tap Shinokawa/nipaplay-reload</code></pre>
+                    <p>安装 NipaPlay:</p>
+                    <pre><code>brew install --cask nipaplay-reload</code></pre>
+                    <p>更新 NipaPlay:</p>
+                    <pre><code>brew upgrade nipaplay-reload</code></pre>
+                </div>
+
+                <div class="os-section">
+                    <h4><i class="ri-robot-line"></i> Arch Linux (AUR)</h4>
+                    <p>使用 AUR 助手 (例如 <code>paru</code> 或 <code>yay</code>):</p>
+                    <pre><code>paru -S nipaplay-reload-bin</code></pre>
+                    <p>或</p>
+                    <pre><code>yay -S nipaplay-reload-bin</code></pre>
+                </div>
+
+                <div class="os-section">
+                    <h4><i class="ri-smartphone-line"></i> iOS / iPadOS</h4>
+                    <p>通过 TestFlight 获取测试版:</p>
+                    <a href="https://testflight.apple.com/join/4JMh3t44" class="cta-button secondary" target="_blank"><i class="ri-test-tube-line"></i> 加入 TestFlight</a>
+                </div>
+            </div>
+        `;
+
+        modalBody.innerHTML = ''; // Clear previous content
+        const container = document.createElement('div');
+        container.className = 'download-container';
+
+        const mainDownloadsDiv = document.createElement('div');
+        mainDownloadsDiv.className = 'download-main-list';
+        
+        const mainDownloadsTitle = document.createElement('h3');
+        mainDownloadsTitle.textContent = '直接下载';
+        mainDownloadsDiv.appendChild(mainDownloadsTitle);
+
         if (releasesData && releasesData.length > 0) {
-            modalBody.innerHTML = '';
             const list = document.createElement('ul');
             list.className = 'download-list';
             releasesData.forEach(asset => {
@@ -655,10 +772,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
                 list.appendChild(listItem);
             });
-            modalBody.appendChild(list);
+            mainDownloadsDiv.appendChild(list);
         } else {
-            modalBody.innerHTML = '<p>没有找到可用的下载文件。请稍后重试。</p>';
+            mainDownloadsDiv.insertAdjacentHTML('beforeend', '<p>没有找到可用的下载文件。请稍后重试。</p>');
         }
+        
+        container.appendChild(mainDownloadsDiv);
+        container.insertAdjacentHTML('beforeend', otherDownloadsHtml);
+        modalBody.appendChild(container);
     };
     
     const openModal = () => {

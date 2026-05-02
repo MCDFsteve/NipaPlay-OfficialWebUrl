@@ -267,7 +267,15 @@ section {
 .hero-title-image { max-width: 100%; margin-bottom: 1rem; }
 .hero-subtitle { font-size: 1.5rem; color: var(--text-secondary-color); margin: 1rem 0; }
 .hero-description { font-size: 1.1rem; margin-bottom: 2rem; }
-.hero-buttons { display: flex; justify-content: flex-start; gap: 1rem; }
+.hero-buttons { display: flex; justify-content: flex-start; gap: 1rem; flex-wrap: wrap; align-items: center; }
+.hero-store-buttons { margin-bottom: 0.35rem; flex-direction: row; align-items: flex-start; justify-content: flex-start; gap: 1rem; }
+.store-badge-link { display: inline-flex; border-radius: 10px; overflow: hidden; box-shadow: 0 6px 18px var(--shadow-color); transition: transform 0.25s ease, box-shadow 0.25s ease; }
+.store-badge-link:hover { transform: translateY(-2px); box-shadow: 0 12px 24px var(--shadow-color); }
+.store-badge-link img { display: block; width: auto; height: 66px; object-fit: contain; }
+.hero-secondary-links { display: flex; align-items: center; gap: 1rem; margin-top: 0.15rem; }
+.other-download-link { display: inline-block; font-size: 0.92rem; color: var(--text-secondary-color); text-decoration: underline; text-underline-offset: 3px; }
+.hero-secondary-links .other-download-link i { margin-right: 0.35rem; }
+.other-download-link:hover { color: var(--accent-color); }
 .release-info { margin-top: 1.5rem; font-size: 0.9rem; color: var(--text-secondary-color); }
 .release-info .separator { margin: 0 0.75rem; }
 .hero-image { flex-shrink: 0; width: 45%; }
@@ -358,19 +366,29 @@ section {
 .download-info span { display: block; font-weight: 500; }
 .download-info small { color: var(--text-secondary-color); }
 
-.download-container {
-    display: block;
+#download-modal .modal-content {
+    width: min(96vw, 1400px);
+    max-width: 1400px;
+    max-height: 92vh;
+    padding: 2rem 2.25rem;
 }
 
-@media (min-width: 768px) {
-    .modal-content {
-        max-width: 860px; /* Increase max-width for two columns */
-    }
+#download-modal .modal-body {
+    min-height: calc(92vh - 9rem);
+}
+
+.download-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    min-height: 100%;
+}
+
+@media (min-width: 992px) {
     .download-container {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
         gap: 2rem;
-        align-items: start;
+        align-items: stretch;
     }
     .os-download-instructions {
         margin-top: 0;
@@ -378,7 +396,6 @@ section {
         padding-top: 0;
         border-left: 1px solid var(--border-color);
         padding-left: 2rem;
-        height: 100%;
     }
 }
 
@@ -512,9 +529,17 @@ section {
                 <img src="assets/logo.webp" alt="NipaPlay Title Logo" class="hero-title-image">
                 <p class="hero-subtitle">现代、美观、强大的视频播放器。</p>
                 <p class="hero-description">专为极致影音体验而生，无论是本地收藏还是线上追剧，NipaPlay 都能为您带来前所未有的流畅与便捷。支持自动刮削和显示弹幕，支持挂载Emby和Jellyfin。</p>
-                <div class="hero-buttons">
-                    <a href="javascript:void(0);" class="cta-button primary js-open-modal"><i class="ri-download-2-line"></i>立即下载</a>
-                    <a href="https://github.com/MCDFsteve/NipaPlay-Reload" class="cta-button secondary" target="_blank"><i class="ri-github-fill"></i>了解更多</a>
+                <div class="hero-buttons hero-store-buttons">
+                    <a href="https://apps.apple.com/cn/app/nipaplay/id6751284970" class="store-badge-link" target="_blank" rel="noopener noreferrer">
+                        <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/zh-cn?size=250x83&releaseDate=1738800000" alt="Download on the App Store">
+                    </a>
+                    <a href="https://apps.microsoft.com/detail/9nmr8clq0gcr?referrer=appbadge&mode=full" class="store-badge-link" target="_blank" rel="noopener noreferrer">
+                        <img src="https://get.microsoft.com/images/zh-cn%20dark.svg" alt="Get it from Microsoft Store">
+                    </a>
+                </div>
+                <div class="hero-secondary-links">
+                    <a href="javascript:void(0);" class="other-download-link js-open-modal"><i class="ri-download-2-line"></i>其他下载</a>
+                    <a href="https://github.com/MCDFsteve/NipaPlay-Reload" class="other-download-link" target="_blank" rel="noopener noreferrer"><i class="ri-github-fill"></i>GitHub</a>
                 </div>
                 <div class="release-info">
                     <span id="release-version">正在获取最新版本...</span>
@@ -576,7 +601,6 @@ section {
         <section id="gallery" class="gallery-section anim-group">
             <h2 class="anim-child">软件截图</h2>
             <div class="image-gallery anim-child anim-child--text">
-                <img src="assets/gallery_series_list.webp" alt="剧集列表界面">
                 <img src="assets/gallery_series_details.webp" alt="新番详情界面">
                 <img src="assets/gallery_library_management.webp" alt="库管理界面">
                 <img src="assets/gallery_streaming_library.webp" alt="流媒体媒体库">
@@ -735,12 +759,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     <pre><code>paru -S nipaplay-reload-bin</code></pre>
                     <p>或</p>
                     <pre><code>yay -S nipaplay-reload-bin</code></pre>
-                </div>
-
-                <div class="os-section">
-                    <h4><i class="ri-smartphone-line"></i> iOS / iPadOS</h4>
-                    <p>通过 TestFlight 获取测试版:</p>
-                    <a href="https://testflight.apple.com/join/4JMh3t44" class="cta-button secondary" target="_blank"><i class="ri-test-tube-line"></i> 加入 TestFlight</a>
                 </div>
             </div>
         `;

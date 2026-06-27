@@ -76,26 +76,50 @@ try {
 async function runSelectedTask(selected) {
   switch (selected) {
     case "all":
-      result.tasks.releases = await syncReleases();
-      result.tasks.docs = await syncDocs();
-      result.tasks.assets = await syncAssets();
+      await recordTask("releases", syncReleases);
+      await recordTask("docs", syncDocs);
+      await recordTask("assets", syncAssets);
       return;
     case "releases":
-      result.tasks.releases = await syncReleases();
+      await recordTask("releases", syncReleases);
       return;
     case "docs":
-      result.tasks.docs = await syncDocs();
+      await recordTask("docs", syncDocs);
       return;
     case "assets":
-      result.tasks.assets = await syncAssets();
+      await recordTask("assets", syncAssets);
       return;
     default:
       throw new Error(`Unknown task: ${selected}`);
   }
 }
 
+async function recordTask(name, fn) {
+  try {
+    result.tasks[name] = await fn();
+  } catch (error) {
+    result.tasks[name] = {
+      error: error instanceof Error ? error.message : String(error)
+    };
+  }
+}
+
 async function syncReleases() {
-  const release = await githubJson(`https://api.github.com/repos/${releaseRepo}/releases/latest`);
+  let release;
+  try {
+    release = await githubJson(`https://api.github.com/repos/${releaseRepo}/releases/latest`);
+  } catch (error) {
+    const cached = await readCachedJson("releases.json");
+    if (cached) {
+      return {
+        cached: true,
+        version: Array.isArray(cached) ? cached[0]?.version : undefined,
+        assetCount: Array.isArray(cached) ? cached.length : undefined,
+        error: error instanceof Error ? error.message : String(error)
+      };
+    }
+    throw error;
+  }
   const version = release.tag_name;
   if (!version) {
     throw new Error("GitHub latest release has no tag_name");
@@ -162,6 +186,29 @@ async function syncReleases() {
 }
 
 async function syncDocs() {
+  let output = {};
+  try {
+    output = await buildDocsOutput();
+  } catch (error) {
+    const cached = await readCachedJson("guides.json");
+    if (cached) {
+      return {
+        cached: true,
+        categories: docCategoryCounts(cached),
+        error: error instanceof Error ? error.message : String(error)
+      };
+    }
+    throw error;
+  }
+
+  await writeJsonAtomic(dataPath("guides.json"), output.value);
+  return {
+    categories: docCategoryCounts(output.value),
+    failed: output.failed
+  };
+}
+
+async function buildDocsOutput() {
   const output = {};
   const failed = [];
   for (const directory of ["Documentation", "CONTRIBUTING_GUIDE"]) {
@@ -195,11 +242,7 @@ async function syncDocs() {
     output[key] = guides;
   }
 
-  await writeJsonAtomic(dataPath("guides.json"), output);
-  return {
-    categories: Object.fromEntries(Object.entries(output).map(([key, value]) => [key, value.length])),
-    failed
-  };
+  return { value: output, failed };
 }
 
 async function syncAssets() {
@@ -229,6 +272,24 @@ async function syncAssets() {
   }
 
   return { updated, unchanged, failed };
+}
+
+async function readCachedJson(relativePath) {
+  for (const root of [dataRoot, appDir]) {
+    try {
+      return JSON.parse(await readFile(safeJoin(root, relativePath), "utf8"));
+    } catch {
+      // Try the next location.
+    }
+  }
+  return null;
+}
+
+function docCategoryCounts(value) {
+  if (!value || typeof value !== "object") return {};
+  return Object.fromEntries(
+    Object.entries(value).map(([key, section]) => [key, Array.isArray(section) ? section.length : 0])
+  );
 }
 
 async function listMarkdownFiles(directory) {

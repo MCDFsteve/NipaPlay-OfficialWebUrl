@@ -37,7 +37,7 @@ export MUSIC_LIBRARY_ROOT="${MUSIC_LIBRARY_ROOT:-$NIPAPLAY_DATA_ROOT/music_libra
 mkdir -p "$NIPAPLAY_DATA_ROOT"
 
 if [ ! -f "$NIPAPLAY_DATA_ROOT/.seeded-from-site" ]; then
-  for item in releases.json guides.json data lrcs song_details cloud_playlists watch_progress_data music_library_data assets releases; do
+  for item in data lrcs song_details cloud_playlists watch_progress_data music_library_data; do
     if [ -e "$APP_DIR/$item" ] && [ ! -e "$NIPAPLAY_DATA_ROOT/$item" ]; then
       cp -a "$APP_DIR/$item" "$NIPAPLAY_DATA_ROOT/$item"
     fi

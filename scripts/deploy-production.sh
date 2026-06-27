@@ -15,9 +15,10 @@ fi
 
 cd "$APP_DIR"
 
-if [ -s "$HOME/.nvm/nvm.sh" ]; then
+NVM_HOME="${HOME:-/root}"
+if [ -s "$NVM_HOME/.nvm/nvm.sh" ]; then
   # shellcheck disable=SC1090
-  . "$HOME/.nvm/nvm.sh"
+  . "$NVM_HOME/.nvm/nvm.sh"
   nvm use 22 >/dev/null || nvm use --lts >/dev/null || true
 fi
 

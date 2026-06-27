@@ -6,6 +6,7 @@ BRANCH="${BRANCH:-main}"
 REMOTE="${REMOTE:-origin}"
 DATA_ROOT="${NIPAPLAY_DATA_ROOT:-/www/nipaplay-data}"
 LOCK_FILE="/tmp/nipaplay-next-deploy.lock"
+BUILD_MARKER="$APP_DIR/.next/.deployed-head"
 export HOME="${HOME:-/root}"
 
 exec 9>"$LOCK_FILE"
@@ -51,13 +52,18 @@ fi
 git fetch "$REMOTE" "$BRANCH"
 LOCAL_HEAD="$(git rev-parse HEAD)"
 REMOTE_HEAD="$(git rev-parse "$REMOTE/$BRANCH")"
+BUILT_HEAD=""
+if [ -f "$BUILD_MARKER" ]; then
+  BUILT_HEAD="$(cat "$BUILD_MARKER" 2>/dev/null || true)"
+fi
 
-if [ "${FORCE_DEPLOY:-0}" != "1" ] && [ "$LOCAL_HEAD" = "$REMOTE_HEAD" ]; then
+if [ "${FORCE_DEPLOY:-0}" != "1" ] && [ "$LOCAL_HEAD" = "$REMOTE_HEAD" ] && [ "$BUILT_HEAD" = "$LOCAL_HEAD" ]; then
   echo "already up to date: $LOCAL_HEAD"
   exit 0
 fi
 
 git pull --ff-only "$REMOTE" "$BRANCH"
+LOCAL_HEAD="$(git rev-parse HEAD)"
 npm ci --include=dev
 npm run build
 
@@ -67,4 +73,6 @@ else
   pm2 start ecosystem.config.cjs --update-env
 fi
 
+mkdir -p "$(dirname "$BUILD_MARKER")"
+printf '%s\n' "$LOCAL_HEAD" > "$BUILD_MARKER"
 pm2 save

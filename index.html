@@ -73,8 +73,12 @@ body {
     overflow-x: hidden;
 }
 
-body.modal-open, body.nav-open {
+html.modal-open, body.modal-open, body.nav-open {
     overflow: hidden;
+}
+
+html.modal-open, body.modal-open {
+    overscroll-behavior: none;
 }
 
 img {
@@ -371,10 +375,17 @@ section {
     max-width: 1400px;
     max-height: 92vh;
     padding: 2rem 2.25rem;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
 #download-modal .modal-body {
-    min-height: calc(92vh - 9rem);
+    flex: 1 1 auto;
+    height: calc(92vh - 9rem);
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
 }
 
 .download-container {
@@ -387,8 +398,26 @@ section {
 @media (min-width: 992px) {
     .download-container {
         grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+        grid-template-rows: minmax(0, 1fr);
         gap: 2rem;
         align-items: stretch;
+        height: 100%;
+        min-height: 0;
+        overflow: hidden;
+    }
+    #download-modal .modal-body {
+        overflow: hidden;
+    }
+    .download-main-list,
+    .os-download-instructions {
+        height: 100%;
+        min-height: 0;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+    }
+    .download-main-list {
+        padding-right: 0.35rem;
     }
     .os-download-instructions {
         margin-top: 0;
@@ -791,27 +820,45 @@ document.addEventListener('DOMContentLoaded', () => {
         container.insertAdjacentHTML('beforeend', otherDownloadsHtml);
         modalBody.appendChild(container);
     };
+
+    const setModalOpen = (isOpen) => {
+        docElement.classList.toggle('modal-open', isOpen);
+        document.body.classList.toggle('modal-open', isOpen);
+    };
+
+    const containDownloadModalWheel = (event) => {
+        const target = event.target instanceof Element ? event.target : event.target.parentElement;
+        const scrollable = target?.closest('.download-main-list, .os-download-instructions, #download-modal .modal-body');
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        if (!scrollable || !modal.contains(scrollable)) return;
+        if (scrollable.scrollHeight <= scrollable.clientHeight) return;
+
+        scrollable.scrollTop += event.deltaY;
+    };
     
     const openModal = () => {
         modal.classList.add('is-visible');
-        document.body.classList.add('modal-open');
+        setModalOpen(true);
         populateModal();
     };
 
     const closeModal = () => {
         modal.classList.remove('is-visible');
-        document.body.classList.remove('modal-open');
+        setModalOpen(false);
         modalBody.innerHTML = '<p>正在加载版本信息...</p>';
     };
 
     const openPrivacyModal = () => {
         privacyModal.classList.add('is-visible');
-        document.body.classList.add('modal-open');
+        setModalOpen(true);
     };
 
     const closePrivacyModal = () => {
         privacyModal.classList.remove('is-visible');
-        document.body.classList.remove('modal-open');
+        setModalOpen(false);
     };
 
     const toggleNav = () => {
@@ -868,6 +915,7 @@ document.addEventListener('DOMContentLoaded', () => {
     modal.addEventListener('click', (event) => {
         if (event.target === modal) closeModal();
     });
+    modal.addEventListener('wheel', containDownloadModalWheel, { passive: false });
 
     openPrivacyModalButton.addEventListener('click', (e) => {
         e.preventDefault();

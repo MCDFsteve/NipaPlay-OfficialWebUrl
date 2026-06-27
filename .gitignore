@@ -3,3 +3,23 @@
 nipaplay.php
 # Release binaries downloaded by fetch_releases.py
 /releases/
+
+# Next.js / Node
+/.next/
+/node_modules/
+/out/
+/.vercel/
+
+# Local production data and logs
+/.env.local
+/.env.production
+/watch_progress_data/
+/watch_progress_sync.log
+/ip_log.txt
+/music_library_data/
+/node-music-server/node_modules/
+/node-music-server/.env
+/node-music-server/data/
+
+# Server generated certificate challenges
+/.well-known/

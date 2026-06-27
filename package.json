@@ -1,0 +1,46 @@
+{
+  "name": "nipaplay-official-site",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Next.js admin and compatibility server for the NipaPlay official website.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start -H 127.0.0.1 -p ${PORT:-3010}",
+    "lint": "eslint ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MCDFsteve/NipaPlay-OfficialWebUrl.git"
+  },
+  "keywords": [
+    "nipaplay",
+    "nextjs"
+  ],
+  "author": "Aimes Soft",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "bugs": {
+    "url": "https://github.com/MCDFsteve/NipaPlay-OfficialWebUrl/issues"
+  },
+  "homepage": "https://nipaplay.aimes-soft.com",
+  "dependencies": {
+    "lucide-react": "^1.21.0",
+    "next": "^16.2.9",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7"
+  },
+  "devDependencies": {
+    "@types/node": "^26.0.1",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "eslint": "^9.39.4",
+    "eslint-config-next": "^16.2.9",
+    "typescript": "^6.0.3"
+  },
+  "overrides": {
+    "postcss": "^8.5.10"
+  }
+}

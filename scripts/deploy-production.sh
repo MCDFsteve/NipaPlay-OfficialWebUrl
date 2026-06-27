@@ -6,6 +6,7 @@ BRANCH="${BRANCH:-main}"
 REMOTE="${REMOTE:-origin}"
 DATA_ROOT="${NIPAPLAY_DATA_ROOT:-/www/nipaplay-data}"
 LOCK_FILE="/tmp/nipaplay-next-deploy.lock"
+export HOME="${HOME:-/root}"
 
 exec 9>"$LOCK_FILE"
 if ! flock -n 9; then
@@ -14,8 +15,9 @@ if ! flock -n 9; then
 fi
 
 cd "$APP_DIR"
+git config --global --add safe.directory "$APP_DIR" >/dev/null 2>&1 || true
 
-NVM_HOME="${HOME:-/root}"
+NVM_HOME="$HOME"
 if [ -s "$NVM_HOME/.nvm/nvm.sh" ]; then
   # shellcheck disable=SC1090
   . "$NVM_HOME/.nvm/nvm.sh"

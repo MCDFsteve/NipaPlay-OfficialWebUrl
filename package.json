@@ -7,7 +7,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start -H 127.0.0.1 -p ${PORT:-3010}",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "sync:official": "node scripts/sync-official-content.mjs --task=all",
+    "sync:releases": "node scripts/sync-official-content.mjs --task=releases",
+    "sync:docs": "node scripts/sync-official-content.mjs --task=docs",
+    "sync:assets": "node scripts/sync-official-content.mjs --task=assets"
   },
   "repository": {
     "type": "git",

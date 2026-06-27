@@ -21,6 +21,8 @@ Next.js route handlers.
 - Filesystem-backed storage so changes are visible immediately.
 - Static file routes for cached assets and release binaries that are kept out
   of Git.
+- Node-based official website automation for GitHub release packages, docs, and
+  screenshots/assets.
 
 ## Local Development
 
@@ -49,6 +51,10 @@ Optional:
 ```bash
 MUSIC_LIBRARY_CODE=irigas
 MUSIC_LIBRARY_ROOT=/www/nipaplay-data/music_library_data
+NIPAPLAY_RELEASE_REPO=AimesSoft/NipaPlay-Reload
+NIPAPLAY_DOCS_REPO=AimesSoft/NipaPlay-Reload
+NIPAPLAY_ASSETS_REPO=AimesSoft/NipaPlay-Reload
+NIPAPLAY_SOURCE_BRANCH=main
 ```
 
 ## Build
@@ -61,3 +67,15 @@ npm start
 
 The server should be placed behind Nginx, with Nginx proxying the domain to the
 Next.js process.
+
+## Sync Official Content
+
+```bash
+node scripts/sync-official-content.mjs --task=all
+node scripts/sync-official-content.mjs --task=releases
+node scripts/sync-official-content.mjs --task=docs
+node scripts/sync-official-content.mjs --task=assets
+```
+
+The sync script writes mutable content into `NIPAPLAY_DATA_ROOT`, keeping the Git
+worktree clean for automatic deployments.

@@ -38,7 +38,8 @@ const tabs = [
   { id: "json", label: "JSON", icon: FileJson },
   { id: "lyrics", label: "歌词", icon: FileText },
   { id: "song-details", label: "歌曲详情", icon: ListMusic },
-  { id: "playlists", label: "云歌单", icon: Upload }
+  { id: "playlists", label: "云歌单", icon: Upload },
+  { id: "sync", label: "官网同步", icon: RefreshCw }
 ];
 
 export default function AdminConsole() {
@@ -147,6 +148,7 @@ export default function AdminConsole() {
         {tab === "lyrics" ? <TextManager bucket="lyrics" title="歌词" /> : null}
         {tab === "song-details" ? <TextManager bucket="song-details" title="歌曲详情" /> : null}
         {tab === "playlists" ? <PlaylistManager /> : null}
+        {tab === "sync" ? <OfficialSync /> : null}
       </section>
     </main>
   );
@@ -442,6 +444,75 @@ function PlaylistManager() {
         ))}
       </div>
     </Panel>
+  );
+}
+
+function OfficialSync() {
+  const [running, setRunning] = useState("");
+  const [output, setOutput] = useState("");
+
+  async function run(task: string) {
+    setRunning(task);
+    setOutput("同步中，下载新安装包时可能需要几分钟...");
+    const response = await fetch("/api/admin/sync", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ task })
+    });
+    const payload = await response.json();
+    setRunning("");
+    setOutput(JSON.stringify(payload, null, 2));
+  }
+
+  return (
+    <Panel title="官网自动同步">
+      <div className="sync-grid">
+        <SyncAction
+          title="全部同步"
+          description="同步最新安装包、文档和官网截图资源。"
+          disabled={Boolean(running)}
+          onClick={() => run("all")}
+        />
+        <SyncAction
+          title="Release 包"
+          description="从 GitHub Release 下载最新安装包并更新 releases.json。"
+          disabled={Boolean(running)}
+          onClick={() => run("releases")}
+        />
+        <SyncAction
+          title="文档"
+          description="抓取 Documentation 与 CONTRIBUTING_GUIDE 并更新 guides.json。"
+          disabled={Boolean(running)}
+          onClick={() => run("docs")}
+        />
+        <SyncAction
+          title="截图资源"
+          description="拉取 icon、logo、首页截图和功能截图，转换为 WebP。"
+          disabled={Boolean(running)}
+          onClick={() => run("assets")}
+        />
+      </div>
+      <pre className="sync-output">{output}</pre>
+    </Panel>
+  );
+}
+
+function SyncAction({
+  title,
+  description,
+  disabled,
+  onClick
+}: {
+  title: string;
+  description: string;
+  disabled: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button className="sync-action" disabled={disabled} onClick={onClick}>
+      <strong>{title}</strong>
+      <span>{description}</span>
+    </button>
   );
 }
 

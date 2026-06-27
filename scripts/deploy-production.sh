@@ -55,7 +55,7 @@ if [ "${FORCE_DEPLOY:-0}" != "1" ] && [ "$LOCAL_HEAD" = "$REMOTE_HEAD" ]; then
 fi
 
 git pull --ff-only "$REMOTE" "$BRANCH"
-npm ci
+npm ci --include=dev
 npm run build
 
 if pm2 describe nipaplay-next >/dev/null 2>&1; then

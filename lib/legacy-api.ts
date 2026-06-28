@@ -1,11 +1,13 @@
 import crypto from "node:crypto";
-import { mkdir, readdir, readFile, stat, writeFile } from "node:fs/promises";
+import { mkdir, readdir, readFile, stat, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { atomicWrite, readFirstFile, safeFilename, safeRelativePath } from "./content";
 import { contentPath, dataRoot, musicRoot, repoPath } from "./paths";
 import { fileResponse, jsonResponse, legacyJson, mimeType, textResponse } from "./responses";
 
 const audioExtensions = new Set(["mp3", "flac", "wav", "m4a", "aac", "ogg", "opus", "wv", "ape"]);
+const logShareLifetimeMs = 60 * 60 * 1000;
+const maxLogShareBytes = 2 * 1024 * 1024;
 
 export async function htmlFileRoute(fileName: string) {
   const file = await readFirstFile(fileName);
@@ -34,6 +36,73 @@ export async function staticFileRoute(request: Request, baseDir: "assets" | "rel
     }
   }
   return legacyJson(404, "未找到文件");
+}
+
+export async function nipaplayLogRoute(request: Request) {
+  const method = request.method.toUpperCase();
+  if (method === "OPTIONS") {
+    return new Response(null, { status: 204, headers: corsHeaders() });
+  }
+
+  await cleanOldLogShares();
+
+  if (method === "POST") {
+    const body = await request.text();
+    if (Buffer.byteLength(body) > maxLogShareBytes) {
+      return logShareJson({ success: false, error: "日志数据过大" });
+    }
+    let payload: { logs?: unknown };
+    try {
+      payload = JSON.parse(body || "{}") as { logs?: unknown };
+    } catch {
+      return logShareJson({ success: false, error: "JSON 解析失败" });
+    }
+    if (!Array.isArray(payload.logs)) {
+      return logShareJson({ success: false, error: "无效的日志数据" });
+    }
+
+    const logId = crypto.randomBytes(8).toString("hex");
+    const target = contentPath("nipa_logs", `${logId}.json`);
+    await atomicWrite(
+      target,
+      `${JSON.stringify({ timestamp: Math.floor(Date.now() / 1000), logs: payload.logs }, null, 2)}\n`
+    );
+    return logShareJson({
+      success: true,
+      logId,
+      viewUrl: `${requestOrigin(request)}/nipaplay.php?id=${logId}`
+    });
+  }
+
+  if (method !== "GET" && method !== "HEAD") {
+    return logShareJson({ success: false, error: "仅支持 GET / POST 请求" }, 405);
+  }
+
+  const url = new URL(request.url);
+  const logId = (url.searchParams.get("id") ?? "").replace(/[^A-Za-z0-9]/g, "");
+  if (!logId) {
+    return logShareJson({ success: false, error: "未提供日志ID" });
+  }
+
+  const found = await firstExistingPath("nipa_logs", `${logId}.json`);
+  if (!found) {
+    return logShareJson({ success: false, error: "日志不存在" });
+  }
+
+  const rawJson = await readFile(found, "utf8");
+  if (url.searchParams.has("raw")) {
+    return method === "HEAD"
+      ? new Response(null, { status: 200, headers: logShareHeaders("application/json; charset=utf-8") })
+      : new Response(rawJson, { status: 200, headers: logShareHeaders("application/json; charset=utf-8") });
+  }
+
+  if (method === "HEAD") {
+    return new Response(null, { status: 200, headers: logShareHeaders("text/html; charset=utf-8") });
+  }
+  return new Response(renderLogShareHtml(JSON.parse(rawJson) as LogShareData), {
+    status: 200,
+    headers: logShareHeaders("text/html; charset=utf-8")
+  });
 }
 
 export async function cloudPlaylistRoute(request: Request) {
@@ -506,9 +575,227 @@ function crc32(input: string) {
 function corsHeaders() {
   return {
     "access-control-allow-origin": "*",
-    "access-control-allow-methods": "GET, POST, OPTIONS",
+    "access-control-allow-methods": "GET, HEAD, POST, OPTIONS",
     "access-control-allow-headers": "Content-Type, Accept, Origin, User-Agent"
   };
+}
+
+type LogShareData = {
+  timestamp?: unknown;
+  logs?: unknown;
+};
+
+type LogShareEntry = Record<string, unknown>;
+
+function logShareJson(payload: Record<string, unknown>, status = 200) {
+  return jsonResponse(payload, status, { headers: corsHeaders() });
+}
+
+function logShareHeaders(contentType: string) {
+  const headers = new Headers(corsHeaders());
+  headers.set("content-type", contentType);
+  headers.set("cache-control", "no-store");
+  return headers;
+}
+
+function requestOrigin(request: Request) {
+  const url = new URL(request.url);
+  return `${url.protocol}//${url.host}`;
+}
+
+async function cleanOldLogShares() {
+  const dir = contentPath("nipa_logs");
+  await mkdir(dir, { recursive: true });
+  const now = Date.now();
+  const entries = await readdir(dir, { withFileTypes: true }).catch(() => []);
+  await Promise.all(
+    entries
+      .filter((entry) => entry.isFile() && entry.name.endsWith(".json"))
+      .map(async (entry) => {
+        const target = path.join(dir, entry.name);
+        try {
+          const info = await stat(target);
+          if (now - info.mtimeMs > logShareLifetimeMs) {
+            await unlink(target);
+          }
+        } catch {
+          // Ignore files deleted by a concurrent cleanup.
+        }
+      })
+  );
+}
+
+function renderLogShareHtml(data: LogShareData) {
+  const logs = Array.isArray(data.logs) ? data.logs.map(toLogShareEntry) : [];
+  const initialJson = JSON.stringify({ logs }).replace(/</g, "\\u003c");
+  return `<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <title>NipaPlay 日志查看器</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.6;
+      margin: 0;
+      padding: 20px;
+      background: #1a1a1a;
+      color: #fff;
+    }
+    .log-entry {
+      padding: 8px;
+      border-bottom: 1px solid #333;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      overflow-wrap: anywhere;
+    }
+    .timestamp {
+      color: #888;
+      margin-right: 10px;
+    }
+    .level {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 3px;
+      margin-right: 10px;
+      font-size: 12px;
+      background: #666;
+    }
+    .level-DEBUG { background: #666; }
+    .level-INFO { background: #0066cc; }
+    .level-WARN { background: #cc8800; }
+    .level-ERROR { background: #cc0000; }
+    .tag {
+      background: rgba(255,255,255,0.2);
+      padding: 2px 6px;
+      border-radius: 3px;
+      margin-right: 10px;
+      font-size: 12px;
+    }
+    .message {
+      margin-left: 10px;
+      word-break: break-word;
+    }
+    .header {
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #333;
+    }
+    .auto-refresh {
+      float: right;
+      color: #888;
+    }
+    @media (max-width: 600px) {
+      body { padding: 10px; }
+      .log-entry { font-size: 12px; }
+      .timestamp { display: block; margin-bottom: 4px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>NipaPlay 日志查看器</h1>
+    <div class="auto-refresh">
+      <label>
+        <input type="checkbox" id="autoRefresh"> 自动刷新
+      </label>
+    </div>
+  </div>
+  <div id="logContent">
+    ${logs.map(renderLogEntry).join("")}
+  </div>
+  <script id="initialLogs" type="application/json">${initialJson}</script>
+  <script>
+    const autoRefreshCheckbox = document.getElementById("autoRefresh");
+    const logContent = document.getElementById("logContent");
+    let autoRefreshInterval;
+
+    function rawUrl() {
+      const url = new URL(window.location.href);
+      url.searchParams.set("raw", "1");
+      return url.toString();
+    }
+
+    function addText(parent, className, value) {
+      const span = document.createElement("span");
+      span.className = className;
+      span.textContent = value || "";
+      parent.appendChild(span);
+    }
+
+    function renderLogs(logs) {
+      logContent.textContent = "";
+      logs.forEach((log) => {
+        const entry = document.createElement("div");
+        const level = String(log.level || "INFO").replace(/[^A-Za-z0-9_-]/g, "") || "INFO";
+        entry.className = "log-entry";
+        addText(entry, "timestamp", new Date(log.timestamp || Date.now()).toTimeString().split(" ")[0]);
+        addText(entry, "level level-" + level, String(log.level || "INFO"));
+        addText(entry, "tag", String(log.tag || ""));
+        addText(entry, "message", String(log.message || ""));
+        logContent.appendChild(entry);
+      });
+    }
+
+    function refreshLogs() {
+      fetch(rawUrl(), { cache: "no-store" })
+        .then((response) => response.json())
+        .then((data) => renderLogs(Array.isArray(data.logs) ? data.logs : []))
+        .catch(() => {});
+    }
+
+    autoRefreshCheckbox.addEventListener("change", function() {
+      if (this.checked) {
+        refreshLogs();
+        autoRefreshInterval = setInterval(refreshLogs, 5000);
+      } else {
+        clearInterval(autoRefreshInterval);
+      }
+    });
+  </script>
+</body>
+</html>`;
+}
+
+function renderLogEntry(value: LogShareEntry) {
+  const level = stringValue(value.level, "INFO");
+  return `<div class="log-entry">
+  <span class="timestamp">${escapeHtml(formatLogTimestamp(value.timestamp))}</span>
+  <span class="level level-${escapeHtml(levelClass(level))}">${escapeHtml(level)}</span>
+  <span class="tag">${escapeHtml(stringValue(value.tag))}</span>
+  <span class="message">${escapeHtml(stringValue(value.message))}</span>
+</div>`;
+}
+
+function toLogShareEntry(value: unknown): LogShareEntry {
+  return value && typeof value === "object" && !Array.isArray(value)
+    ? value as LogShareEntry
+    : { message: String(value ?? "") };
+}
+
+function stringValue(value: unknown, fallback = "") {
+  return value == null ? fallback : String(value);
+}
+
+function formatLogTimestamp(value: unknown) {
+  const date = new Date(stringValue(value, new Date().toISOString()));
+  if (Number.isNaN(date.getTime())) {
+    return "";
+  }
+  return date.toTimeString().split(" ")[0];
+}
+
+function levelClass(level: string) {
+  return level.replace(/[^A-Za-z0-9_-]/g, "") || "INFO";
+}
+
+function escapeHtml(value: string) {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }
 
 type ProgressData = {

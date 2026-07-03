@@ -15,6 +15,49 @@ NPM_PREFIX_DIR="${NIPAPLAY_NPM_PREFIX:-/tmp/nipaplay-npm-prefix}"
 NPM_REGISTRY="${NIPAPLAY_NPM_REGISTRY:-https://registry.npmjs.org}"
 export HOME="${HOME:-/root}"
 
+node_major_ok() {
+  node -e 'process.exit(Number(process.versions.node.split(".")[0]) >= 20 ? 0 : 1)' >/dev/null 2>&1
+}
+
+select_node_runtime() {
+  local configured_bin="${NIPAPLAY_NODE_BIN_DIR:-${NIPAPLAY_NODE_BIN:-}}"
+  if [ -n "$configured_bin" ] && [ -x "$configured_bin" ] && [ "$(basename "$configured_bin")" = "node" ]; then
+    configured_bin="$(dirname "$configured_bin")"
+  fi
+
+  if [ -n "$configured_bin" ] && [ -x "$configured_bin/node" ]; then
+    export PATH="$configured_bin:$PATH"
+    hash -r
+  fi
+
+  if command -v node >/dev/null 2>&1 && node_major_ok; then
+    return
+  fi
+
+  local detected_bin
+  detected_bin="$(find /www/server/nodejs -path '*/bin/node' -type f 2>/dev/null | sed 's#/node$##' | sort -V | tail -n 1 || true)"
+  if [ -n "$detected_bin" ] && [ -x "$detected_bin/node" ]; then
+    export PATH="$detected_bin:$PATH"
+    hash -r
+  fi
+}
+
+ensure_node_runtime() {
+  select_node_runtime
+  if ! command -v node >/dev/null 2>&1 || ! node_major_ok; then
+    echo "Node.js 20+ is required for deployment; found: $(command -v node || echo missing) $(node -v 2>/dev/null || true)" >&2
+    exit 1
+  fi
+  if ! command -v npm >/dev/null 2>&1; then
+    echo "npm is required for deployment" >&2
+    exit 1
+  fi
+  if ! command -v pm2 >/dev/null 2>&1; then
+    echo "pm2 is required for deployment" >&2
+    exit 1
+  fi
+}
+
 exec 9>"$LOCK_FILE"
 if ! flock -n 9; then
   echo "deploy already running"
@@ -37,6 +80,8 @@ if [ -f "$APP_DIR/.env.production" ]; then
   . "$APP_DIR/.env.production"
   set +a
 fi
+
+ensure_node_runtime
 
 export NODE_ENV=production
 export PORT="${PORT:-3010}"

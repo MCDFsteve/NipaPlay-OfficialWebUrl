@@ -108,6 +108,10 @@ export async function nipaplayLogRoute(request: Request) {
 export async function cloudPlaylistRoute(request: Request) {
   const url = new URL(request.url);
   const method = request.method.toUpperCase();
+  if (method === "OPTIONS") {
+    return new Response(null, { status: 204, headers: corsHeaders() });
+  }
+
   let action = url.searchParams.get("action") ?? (method === "GET" || method === "HEAD" ? "download" : "");
   let cloudId = url.searchParams.get("id") ?? "";
 
@@ -120,33 +124,34 @@ export async function cloudPlaylistRoute(request: Request) {
       return validation;
     }
     if (action !== "upload") {
-      return legacyJson(400, "缺少有效的 action=upload");
+      return legacyJsonCors(400, "缺少有效的 action=upload");
     }
     const file = parsed.files.playlist_file;
     const body = file?.buffer ?? parsed.raw;
     if (!body || body.length === 0) {
-      return legacyJson(400, "未检测到上传内容");
+      return legacyJsonCors(400, "未检测到上传内容");
     }
     const target = contentPath("cloud_playlists", `${cloudId}.msz`);
     await atomicWrite(target, body);
-    return legacyJson(200, "上传成功", { id: cloudId, size: body.length });
+    return legacyJsonCors(200, "上传成功", { id: cloudId, size: body.length });
   }
 
   if (method !== "GET" && method !== "HEAD") {
-    return legacyJson(405, "不支持的请求方法");
+    return legacyJsonCors(405, "不支持的请求方法");
   }
   const validation = validateCloudId(cloudId);
   if (validation) {
     return validation;
   }
   if (action !== "download") {
-    return legacyJson(400, "缺少有效的 action=download");
+    return legacyJsonCors(400, "缺少有效的 action=download");
   }
   const found = await firstExistingPath("cloud_playlists", `${cloudId}.msz`);
   if (!found) {
-    return legacyJson(404, "未找到对应的云歌单");
+    return legacyJsonCors(404, "未找到对应的云歌单");
   }
   return fileResponse(found, request, {
+    ...corsHeaders(),
     "content-type": "application/octet-stream",
     "x-playlist-id": cloudId,
     "content-disposition": `attachment; filename="${cloudId}.msz"`
@@ -206,16 +211,20 @@ export async function lyricsRoute(request: Request) {
 export async function songIdRoute(request: Request) {
   const url = new URL(request.url);
   const storageFile = contentPath("data", "song_ids.json");
+  if (request.method === "OPTIONS") {
+    return new Response(null, { status: 204, headers: corsHeaders() });
+  }
+
   if (request.method === "GET") {
     const storage = await readSongIdStorage();
     if (url.searchParams.get("action") === "list") {
-      return legacyJson(200, "ok", { entries: storage, count: Object.keys(storage).length });
+      return legacyJsonCors(200, "ok", { entries: storage, count: Object.keys(storage).length });
     }
     const hashes = [...url.searchParams.getAll("hash"), ...url.searchParams.getAll("hash[]")]
       .map((hash) => sanitizeHash(hash))
       .filter(Boolean) as string[];
     if (hashes.length === 0) {
-      return legacyJson(400, "hash 参数格式不正确");
+      return legacyJsonCors(400, "hash 参数格式不正确");
     }
     const result: Record<string, unknown> = {};
     for (const hash of hashes) {
@@ -224,9 +233,9 @@ export async function songIdRoute(request: Request) {
       }
     }
     if (hashes.length === 1 && Object.keys(result).length === 0) {
-      return legacyJson(404, "未找到对应映射");
+      return legacyJsonCors(404, "未找到对应映射");
     }
-    return legacyJson(200, "ok", { entries: result });
+    return legacyJsonCors(200, "ok", { entries: result });
   }
 
   if (request.method === "POST") {
@@ -235,10 +244,10 @@ export async function songIdRoute(request: Request) {
     const hash = sanitizeHash(String(fields.hash ?? ""));
     const neteaseId = Number(fields.netease_id);
     if (!hash) {
-      return legacyJson(400, "缺少或非法的 hash 参数");
+      return legacyJsonCors(400, "缺少或非法的 hash 参数");
     }
     if (!Number.isInteger(neteaseId) || neteaseId <= 0) {
-      return legacyJson(400, "netease_id 必须为正整数");
+      return legacyJsonCors(400, "netease_id 必须为正整数");
     }
     const storage = await readSongIdStorage();
     const entry = {
@@ -252,10 +261,10 @@ export async function songIdRoute(request: Request) {
     };
     storage[hash] = entry;
     await atomicWrite(storageFile, `${JSON.stringify(storage, null, 2)}\n`);
-    return legacyJson(200, "保存成功", { entry });
+    return legacyJsonCors(200, "保存成功", { entry });
   }
 
-  return legacyJson(405, "仅支持 GET 与 POST 请求");
+  return legacyJsonCors(405, "仅支持 GET 与 POST 请求");
 }
 
 export async function songDetailRoute(request: Request) {
@@ -515,7 +524,7 @@ async function parseBody(request: Request) {
 function validateCloudId(cloudId: string) {
   return /^[A-Za-z0-9_]{5,}$/.test(cloudId)
     ? null
-    : legacyJson(400, "ID 需至少 5 位，并且仅能包含字母、数字或下划线");
+    : legacyJsonCors(400, "ID 需至少 5 位，并且仅能包含字母、数字或下划线");
 }
 
 async function firstExistingPath(...parts: string[]) {
@@ -576,8 +585,21 @@ function corsHeaders() {
   return {
     "access-control-allow-origin": "*",
     "access-control-allow-methods": "GET, HEAD, POST, OPTIONS",
-    "access-control-allow-headers": "Content-Type, Accept, Origin, User-Agent"
+    "access-control-allow-headers": "Content-Type, Accept, Origin, User-Agent",
+    "access-control-expose-headers": "Content-Length, Content-Range, X-Playlist-Id, Content-Disposition"
   };
+}
+
+function legacyJsonCors(status: number, message: string, payload: Record<string, unknown> = {}) {
+  return jsonResponse(
+    {
+      success: status >= 200 && status < 300,
+      message,
+      ...payload
+    },
+    status,
+    { headers: corsHeaders() }
+  );
 }
 
 type LogShareData = {

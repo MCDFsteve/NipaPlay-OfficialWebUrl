@@ -10,3 +10,7 @@ export function GET(request: Request) {
 export function POST(request: Request) {
   return songIdRoute(request);
 }
+
+export function OPTIONS(request: Request) {
+  return songIdRoute(request);
+}

@@ -14,3 +14,7 @@ export function HEAD(request: Request) {
 export function POST(request: Request) {
   return cloudPlaylistRoute(request);
 }
+
+export function OPTIONS(request: Request) {
+  return cloudPlaylistRoute(request);
+}

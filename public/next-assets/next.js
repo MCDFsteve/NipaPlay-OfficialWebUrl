@@ -135,13 +135,15 @@
   /* —— 设备：组网 → 说 → 播放 —— */
   const devices = (() => {
     const sec = $('#devices'), pulse = $('.pulse', sec), phAsk = $('.ph-ask em', sec);
-    const trail = $$('.trail circle', sec), rMac = $('.r-mac', sec), rTv = $('.r-tv', sec);
+    const trail = $$('.trail circle', sec), rMac = $('.r-mac', sec), rTv = $('.r-tv', sec), rSrv = $('.r-srv', sec);
+    const pMacSrv = $('#m-mac-srv');
     const ripple = (el) => { el.classList.remove('go'); void el.getBoundingClientRect(); el.classList.add('go'); };
     let hist = [];
     const pPhMac = $('#m-ph-mac'), pMacTv = $('#m-mac-tv');
     const tl = timeline();
-    const travel = (path, at, dur, end) => tl.tween(at, dur, (k) => {
-      const e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+    const travel = (path, at, dur, end, back) => tl.tween(at, dur, (k) => {
+      const e0 = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+      const e = back ? 1 - e0 : e0;
       const p = path.getPointAtLength(path.getTotalLength() * e);
       pulse.setAttribute('cx', p.x); pulse.setAttribute('cy', p.y);
       pulse.style.opacity = k < 1 ? 1 : 0;
@@ -152,7 +154,7 @@
       });
       if (k >= 1) { hist = []; end && end(); }
     });
-    function base() { tl.cancel(); sec.classList.remove('think', 'on-tv'); pulse.style.opacity = 0; trail.forEach((c) => (c.style.opacity = 0)); hist = []; phAsk.textContent = ''; }
+    function base() { tl.cancel(); sec.classList.remove('think', 'on-tv', 'busy', 'toast'); pulse.style.opacity = 0; trail.forEach((c) => (c.style.opacity = 0)); hist = []; phAsk.textContent = ''; }
     const steps = [
       () => { base(); sec.classList.add('lit'); },
       (instant) => {
@@ -167,12 +169,41 @@
         sec.classList.add('think');
         travel(pMacTv, 200, 1000, () => { ripple(rTv); sec.classList.remove('think'); sec.classList.add('on-tv'); });
       },
+      (instant) => {
+        base(); sec.classList.add('lit', 'on-tv'); phAsk.textContent = phAsk.dataset.text;
+        if (instant) { sec.classList.add('toast'); return; }
+        // 书房的梨花把下载交给服务器上的梨花，做完再回报
+        sec.classList.add('think');
+        travel(pMacSrv, 300, 700, () => { ripple(rSrv); sec.classList.remove('think'); sec.classList.add('busy'); });
+        tl.at(2600, () => sec.classList.remove('busy'));
+        travel(pMacSrv, 2700, 700, () => { ripple(rMac); sec.classList.add('toast'); }, true);
+      },
     ];
     return { enter: (i, from) => steps[i](from > i) };
   })();
 
+  /* —— 架构：能力层 → 身体 → 大脑与家 —— */
+  const arch = (() => {
+    const sec = $('#arch'), tl = timeline();
+    const plates = { top: $('.p-top', sec), cap: $('.p-cap', sec), body: $('.p-body', sec), home: $('.p-home', sec) };
+    const light = (...names) => Object.entries(plates).forEach(([k, el]) => el.classList.toggle('on', names.includes(k)));
+    const steps = [
+      (instant) => {
+        light('top', 'cap'); sec.classList.add('lit');
+        if (instant) { sec.classList.add('hit', 'hit2'); return; }
+        tl.at(700, () => sec.classList.add('hit'));
+        tl.at(1500, () => sec.classList.add('hit2'));
+      },
+      () => { light('body'); sec.classList.add('lit', 'hit2'); },
+      () => { light('top', 'home'); sec.classList.add('lit'); },
+    ];
+    return { enter: (i, from) => { tl.cancel(); sec.classList.remove('hit', 'hit2'); steps[i](from > i); } };
+  })();
+  // 仓库窗格：逐行写出
+  $$('#home .pane').forEach((pane) => $$('.cl', pane).forEach((ln, n) => ln.style.setProperty('--n', n)));
+
   /* —— 分步场景：滚到哪一步就切到哪一步 —— */
-  const stepScenes = [{ el: $('#how'), ctl: how }, { el: $('#devices'), ctl: devices }].map((s) => ({ ...s, n: +s.el.dataset.steps, cur: -1 }));
+  const stepScenes = [{ el: $('#how'), ctl: how }, { el: $('#devices'), ctl: devices }, { el: $('#arch'), ctl: arch }, { el: $('#home'), ctl: { enter() {} } }].map((s) => ({ ...s, n: +s.el.dataset.steps, cur: -1 }));
   stepScenes.forEach((s) => s.el.style.setProperty('--n', s.n));
   function updateSteps() {
     const vh = innerHeight;

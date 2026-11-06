@@ -22,11 +22,27 @@
         el.style.transformOrigin = '0 0';
         el.style.width = `${w}px`; el.style.height = `${h}px`;
       } else {
+        el.style.width = `${w}px`; el.style.height = `${h}px`;
         // 窄屏上只露出应用左侧有内容的部分，字能大一些
         const narrow = innerWidth < 860 && el.closest('#how');
         el.style.transform = `scale(${holder.clientWidth / (narrow ? 940 : w)})`;
       }
     }
+  }
+
+  /* —— 首屏标题逐字浮现；其他标题按行从遮罩里升起 —— */
+  const h1 = $('h1.letters');
+  if (h1) {
+    let c = 0;
+    for (const w of $$('.w', h1)) w.innerHTML = [...w.textContent].map((ch) => `<span class="ch" style="--c:${c++}">${ch}</span>`).join('');
+    const go = () => h1.classList.add('go');
+    Promise.race([document.fonts ? document.fonts.ready : Promise.resolve(), new Promise((r) => setTimeout(r, 900))]).then(() => requestAnimationFrame(go));
+  }
+  for (const h of $$('h2[data-reveal], .sec-h')) {
+    const parts = h.innerHTML.split(/<br\s*\/?>/i);
+    h.innerHTML = parts.map((t, l) => `<span class="hl-mask"><span class="hl-in" style="--l:${l}">${t}</span></span>`).join('');
+    h.classList.add('lines');
+    if (!h.hasAttribute('data-reveal')) h.setAttribute('data-reveal', '');
   }
 
   /* —— 进入画面时出现（只触发一次） —— */
@@ -56,7 +72,7 @@
 
   /* —— 工作方式：说 → 准备 → 完成 —— */
   const how = (() => {
-    const app = $('#how .how-app');
+    const app = $('#how .how-app'), win = $('#how .window');
     const ask = $('.ask-text', app), you = $('.you-bubble', app), think = $('.thinking', app), thW = $('.th-w', app), secs = $('.secs', app);
     const reply = $('.reply', app), cards = $('.cards', app), reply2 = $('.reply2', app);
     const [s1, s2, s3, s4] = $$('.prep li', app), pct = $('.pct', app), bar = $('.prep .bar', app), tasksN = $('.tasks-n', app);
@@ -66,7 +82,7 @@
     const setDl = (k) => { pct.textContent = `${Math.round(k * 100)}%`; bar.style.setProperty('--dl', `${(k * 100).toFixed(1)}%`); };
     function base() {
       tl.cancel(); clearInterval(secTimer);
-      app.classList.remove('talking', 'running', 'done');
+      app.classList.remove('talking', 'running', 'done'); win.classList.remove('zoom');
       [you, think, reply, cards, reply2].forEach((e) => on(e, false));
       ask.textContent = ''; reply.textContent = ''; reply2.textContent = '';
       [s1, s2, s3, s4].forEach((li) => st(li, '')); setDl(0); tasksN.textContent = '4';
@@ -94,6 +110,8 @@
         tl.at(500, () => on(reply, true));
         tl.tween(500, 1600, (k) => typeInto(reply, k));
         tl.at(2300, () => { on(cards, true); st(s1, 'go'); tasksN.textContent = '5'; });
+        tl.at(2500, () => win.classList.add('zoom'));
+        tl.at(6400, () => win.classList.remove('zoom'));
         tl.at(2700, () => { st(s1, 'ok'); st(s2, 'go'); });
         tl.tween(2700, 2600, setDl);
         tl.at(3500, () => st(s3, 'go'));
@@ -112,30 +130,37 @@
   /* —— 设备：组网 → 说 → 播放 —— */
   const devices = (() => {
     const sec = $('#devices'), pulse = $('.pulse', sec), phAsk = $('.ph-ask em', sec);
+    const trail = $$('.trail circle', sec), rMac = $('.r-mac', sec), rTv = $('.r-tv', sec);
+    const ripple = (el) => { el.classList.remove('go'); void el.getBoundingClientRect(); el.classList.add('go'); };
+    let hist = [];
     const pPhMac = $('#m-ph-mac'), pMacTv = $('#m-mac-tv');
     const tl = timeline();
-    const travel = (path, at, dur) => tl.tween(at, dur, (k) => {
+    const travel = (path, at, dur, end) => tl.tween(at, dur, (k) => {
       const e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
       const p = path.getPointAtLength(path.getTotalLength() * e);
       pulse.setAttribute('cx', p.x); pulse.setAttribute('cy', p.y);
       pulse.style.opacity = k < 1 ? 1 : 0;
+      hist.push(p); if (hist.length > 14) hist.shift();
+      trail.forEach((c, i) => {
+        const q = hist[hist.length - 1 - (i + 1) * 2];
+        if (q && k < 1) { c.setAttribute('cx', q.x); c.setAttribute('cy', q.y); c.style.opacity = (0.55 * (1 - i / trail.length)).toFixed(2); } else c.style.opacity = 0;
+      });
+      if (k >= 1) { hist = []; end && end(); }
     });
-    function base() { tl.cancel(); sec.classList.remove('think', 'on-tv'); pulse.style.opacity = 0; phAsk.textContent = ''; }
+    function base() { tl.cancel(); sec.classList.remove('think', 'on-tv'); pulse.style.opacity = 0; trail.forEach((c) => (c.style.opacity = 0)); hist = []; phAsk.textContent = ''; }
     const steps = [
       () => { base(); sec.classList.add('lit'); },
       (instant) => {
         base(); sec.classList.add('lit');
         if (instant) { phAsk.textContent = phAsk.dataset.text; return; }
         tl.tween(300, 1200, (k) => typeInto(phAsk, k));
-        travel(pPhMac, 1700, 900);
-        tl.at(2500, () => sec.classList.add('think'));
+        travel(pPhMac, 1700, 1000, () => { ripple(rMac); sec.classList.add('think'); });
       },
       (instant) => {
         base(); sec.classList.add('lit'); phAsk.textContent = phAsk.dataset.text;
         if (instant) { sec.classList.add('on-tv'); return; }
         sec.classList.add('think');
-        travel(pMacTv, 200, 900);
-        tl.at(1000, () => { sec.classList.remove('think'); sec.classList.add('on-tv'); });
+        travel(pMacTv, 200, 1000, () => { ripple(rTv); sec.classList.remove('think'); sec.classList.add('on-tv'); });
       },
     ];
     return { enter: (i, from) => steps[i](from > i) };
@@ -155,6 +180,7 @@
       if (i !== s.cur && r.top < vh * 0.35) {
         const from = s.cur; s.cur = i;
         s.el.dataset.step = i;
+        const list = $('.step-list', s.el); if (list) list.style.setProperty('--prog', i / (s.n - 1));
         s.ctl.enter(i, from);
       }
     }

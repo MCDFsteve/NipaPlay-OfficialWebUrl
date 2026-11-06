@@ -22,15 +22,17 @@
 
 <section id="hero">
   <div class="hero-copy">
-    <p class="kicker" data-reveal>开发者预览　Alpha 3</p>
-    <h1 data-reveal style="--i:1">NipaPlay <span>Next</span></h1>
-    <p class="lead" data-reveal style="--i:2">说一句想看什么，梨花替你找片、下载、整理媒体库，<br>资料和弹幕一并补上。</p>
-    <div class="cta" data-reveal style="--i:3">
+    <p class="kicker" data-reveal>开发者预览<span class="sep">·</span><span class="lat">ALPHA 3</span></p>
+    <h1 class="letters" aria-label="NipaPlay Next"><span class="w">NipaPlay</span> <span class="w next">Next</span></h1>
+    <p class="lead" data-reveal style="--i:3">说一句想看什么，梨花替你找片、下载、整理媒体库，<br>资料和弹幕一并补上。</p>
+    <div class="cta" data-reveal style="--i:4">
       <a class="btn pink" href="#get">下载 Alpha 3</a>
       <a class="btn ghost" href="#how">看看怎么用</a>
     </div>
   </div>
-  <div class="window hero-win" data-reveal style="--i:4">
+  <div class="hero-stage" data-reveal style="--i:5">
+    <div class="ambient" aria-hidden="true"><img src="/next-assets/bd-gakusei-s.webp" alt=""></div>
+  <div class="window hero-win">
     <div class="scaler" data-w="1440" data-h="900">
       <div class="app">
         <img class="app-bd" src="/next-assets/bd-gakusei.webp" alt="">
@@ -60,6 +62,22 @@
       </div>
     </div>
   </div>
+    <div class="iphone" aria-hidden="true">
+      <div class="iscr"><div class="scaler" data-w="402" data-h="874"><div class="ph">
+        <i class="ph-island"></i>
+        <p class="ph-status"><span>9:41</span><span>▂▄▆ ▭</span></p>
+        <div class="ph-hero"><img src="/next-assets/bd-yani.webp" alt="">
+          <div class="ph-copy"><img class="logo" src="/next-assets/logo-yani.webp" alt=""><p class="ph-meta"><b>★ 8.2</b> · 2026 · 喜剧 · 12 集</p><span class="ph-play">▶　播放 第 1 集</span></div>
+        </div>
+        <p class="ph-h3">继续观看</p>
+        <div class="ph-row"><img src="/next-assets/still-gakusei-4.webp" alt=""><img src="/next-assets/still-anbu-4.webp" alt=""></div>
+        <div class="ph-dock">
+          <div class="ph-acc"><img src="/next-assets/nipa-avatar.webp" alt=""><span>今天想看什么？</span><i></i></div>
+          <div class="ph-tabs"><div class="ph-bar"><b class="on"></b><b></b><b></b><b></b></div><span class="ph-search"></span></div>
+        </div>
+      </div></div></div>
+    </div>
+  </div>
 </section>
 
 <!-- 工作方式：三步 -->
@@ -67,14 +85,15 @@
   <div class="stage">
     <div class="step-copy">
       <p class="kicker">工作方式</p>
-      <div class="step-texts">
-        <div class="st" data-s="0"><h2>你只说<br>想看什么。</h2><p>打字或者直接说。不用找资源站，不用记文件名，也不用自己建文件夹。</p></div>
-        <div class="st" data-s="1"><h2>梨花去准备。</h2><p>她找资源、挑版本、开始下载，认出是哪部作品，补上资料、封面和弹幕。进度在对话里实时更新，关掉窗口也会继续。</p></div>
-        <div class="st" data-s="2"><h2>准备好了，<br>就在媒体库里。</h2><p>点开就能看。下次想接着看，首页第一排就是它。</p></div>
-      </div>
-      <ol class="step-dots"><li>说</li><li>准备</li><li>完成</li></ol>
+      <h2 class="sec-h">一句话，<br>交给梨花。</h2>
+      <ol class="step-list">
+        <li data-s="0"><span class="num">01</span><h3>你只说想看什么</h3><p>打字或者直接说。不用找资源站，不用记文件名，也不用自己建文件夹。</p></li>
+        <li data-s="1"><span class="num">02</span><h3>梨花去准备</h3><p>找资源、挑版本、下载，认出是哪部作品，补上资料、封面和弹幕。进度在对话里实时更新，关掉窗口也会继续。</p></li>
+        <li data-s="2"><span class="num">03</span><h3>准备好了，就在媒体库里</h3><p>点开就能看。下次想接着看，首页第一排就是它。</p></li>
+      </ol>
     </div>
     <div class="step-visual">
+      <div class="ambient" aria-hidden="true"><img class="a-from" src="/next-assets/bd-gakusei-s.webp" alt=""><img class="a-to" src="/next-assets/bd-yani-s.webp" alt=""></div>
       <div class="window">
         <div class="scaler" data-w="1440" data-h="900">
           <div class="app how-app">
@@ -164,6 +183,11 @@
   </div>
 </section>
 
+<div class="dm-band" aria-hidden="true">
+  <div class="dmb-row"><span>第五集终于来了</span><span class="f">梨花！</span><span>前方高能</span><span class="f">弹幕护体</span><span>这季最期待的</span><span class="f">空降成功</span><span>哈哈哈哈哈</span><span class="f">OP 不跳</span></div>
+  <div class="dmb-row rev"><span class="f">名场面</span><span>泪目</span><span class="f">集训回！！</span><span>下周见</span><span class="f">好耶</span><span>这都能找到</span><span class="f">梨花好可爱</span><span>补完了</span></div>
+</div>
+
 <!-- 弹幕 -->
 <section id="danmaku" class="split">
   <div class="split-copy">
@@ -193,12 +217,12 @@
   <div class="stage">
     <div class="step-copy">
       <p class="kicker">设备</p>
-      <div class="step-texts">
-        <div class="st" data-s="0"><h2>每台设备，<br>都是她的身体。</h2><p>书房的电脑、柜子里的服务器、客厅的电视、手里的手机，登录同一个账号就连在一起。</p></div>
-        <div class="st" data-s="1"><h2>在手机上说一句。</h2><p>iPhone 和 iPad 不运行梨花，它们用组网里那台设备上的梨花。</p></div>
-        <div class="st" data-s="2"><h2>客厅就开始放了。</h2><p>媒体库只有一个，片子放在哪台设备上都一样。</p></div>
-      </div>
-      <ol class="step-dots"><li>组网</li><li>说</li><li>播放</li></ol>
+      <h2 class="sec-h">所有设备，<br>一个媒体库。</h2>
+      <ol class="step-list">
+        <li data-s="0"><span class="num">01</span><h3>每台设备都是她的身体</h3><p>书房的电脑、柜子里的服务器、客厅的电视、手里的手机，登录同一个账号就连在一起。</p></li>
+        <li data-s="1"><span class="num">02</span><h3>在手机上说一句</h3><p>iPhone 和 iPad 不运行梨花，它们用组网里那台设备上的梨花。</p></li>
+        <li data-s="2"><span class="num">03</span><h3>客厅就开始放了</h3><p>片子放在哪台设备上都一样，媒体库只有一个。</p></li>
+      </ol>
     </div>
     <div class="step-visual">
       <div class="scaler room-scaler" data-w="1440" data-h="900">
@@ -209,7 +233,10 @@
             <path id="m-mac-srv" d="M488 694 C 515 700, 535 698, 558 692" />
             <path id="m-ph-mac"  d="M1112 600 C 900 664, 640 646, 494 612" />
             <path id="m-ph-tv"   d="M1160 396 C 1120 360, 1080 346, 1034 330" />
+            <g class="trail"><circle r="6"/><circle r="5"/><circle r="4"/><circle r="3"/><circle r="2.5"/></g>
             <circle class="pulse" r="7" />
+            <circle class="ripple r-mac" cx="494" cy="612" r="8" />
+            <circle class="ripple r-tv" cx="470" cy="352" r="8" />
           </svg>
           <div class="dev tv" style="--i:0">
             <div class="scr"><div class="tv-on">
@@ -249,14 +276,14 @@
   <i class="crop tl"></i><i class="crop tr"></i><i class="crop bl"></i><i class="crop br"></i>
   <div class="note-copy">
     <p class="kicker" data-reveal>记忆</p>
-    <h2 data-reveal style="--i:1">她会记事，<br>也会给自己写工具。</h2>
+    <h2 data-reveal style="--i:1">她会记事，<br>也会写工具。</h2>
     <p data-reveal style="--i:2">你说过的偏好、她学会的做法、她自己写的小工具，都放在你电脑上的一个 Git 仓库里。打开就能读，也能改。</p>
   </div>
   <div class="notebook" data-reveal style="--i:1">
     <p class="ln" style="--i:0"><time>11/02</time>周五晚上别下大文件，宿舍网会限速。</p>
     <p class="ln" style="--i:1"><time>11/03</time>写了 intro_skip：开播时按章节跳过片头。</p>
-    <p class="ln" style="--i:2"><time>11/05</time>他习惯先看第一集再决定，不要一次下完整季。</p>
-    <p class="ln" style="--i:3"><time>11/06</time>《学生会也有洞！》周六出第 5 集，到时候去看看。</p>
+    <p class="ln" style="--i:2"><time>11/05</time>他习惯先看第一集再决定。</p>
+    <p class="ln" style="--i:3"><time>11/06</time>《学生会也有洞！》周六更新，记得去看。</p>
     <img class="peek" src="/next-assets/nipa-chibi.webp" alt="">
   </div>
 </section>
@@ -268,19 +295,23 @@
     <h2 data-reveal style="--i:1">你的媒体库，你的模型。</h2>
   </div>
   <div class="cards4">
-    <article data-reveal style="--i:1"><b>开源</b><p>NipaPlay 和梨花用到的工具全部开源，代码在 GitHub 的 AimesSoft/NipaPlay-Reload。</p></article>
-    <article data-reveal style="--i:2"><b>模型由你选择</b><p>填入自己的接口地址和密钥。官方服务、中转和自建的服务都可以。</p></article>
-    <article data-reveal style="--i:3"><b>数据在你自己的设备上</b><p>媒体库、梨花的记忆和设置都保存在本机，设备之间直接连接。</p></article>
-    <article data-reveal style="--i:4"><b>全平台</b><p>macOS、Windows、Linux、iPhone、iPad，以及无界面的 Linux 服务器。</p></article>
+    <article data-reveal style="--i:1"><div class="vig vig-code"><p><i>$</i>git clone<br>github.com/AimesSoft/NipaPlay-Reload<u></u></p></div><b>开源</b><p>NipaPlay 和梨花用到的工具全部开源，代码在 GitHub 的 AimesSoft/NipaPlay-Reload。</p></article>
+    <article data-reveal style="--i:2"><div class="vig vig-form"><span><small>接口地址</small>https://api.example.com/v1</span><span><small>模型</small>你常用的模型</span><em><i></i>已连接</em></div><b>模型由你选择</b><p>填入自己的接口地址和密钥。官方服务、中转和自建的服务都可以。</p></article>
+    <article data-reveal style="--i:3"><div class="vig vig-devs"><span><i></i>书房 · 电脑<em>梨花</em></span><span><i></i>柜子里 · 服务器</span><span><i></i>手里 · 手机</span></div><b>数据在你的设备上</b><p>媒体库、梨花的记忆和设置都保存在本机，设备之间直接连接。</p></article>
+    <article data-reveal style="--i:4"><div class="vig vig-plat"><span>macOS</span><span>Windows</span><span>Linux</span><span>iPhone</span><span>iPad</span><span>服务器</span></div><b>全平台</b><p>macOS、Windows、Linux、iPhone、iPad，以及无界面的 Linux 服务器。</p></article>
   </div>
 </section>
 
 <!-- 下载 -->
 <section id="get">
-  <div class="swing" aria-hidden="true"><img src="/next-assets/nipa-swing.webp" alt=""></div>
+  <div class="get-art" aria-hidden="true">
+    <div class="glow"></div>
+    <div class="petals"><i style="--x:12%;--d:0s;--t:9s"></i><i style="--x:28%;--d:2.2s;--t:11s"></i><i style="--x:44%;--d:4.6s;--t:10s"></i><i style="--x:63%;--d:1.1s;--t:12s"></i><i style="--x:78%;--d:3.3s;--t:9.5s"></i><i style="--x:90%;--d:6s;--t:11.5s"></i><i style="--x:35%;--d:7.4s;--t:10.5s"></i><i style="--x:70%;--d:8.6s;--t:9s"></i></div>
+    <div class="swing"><img src="/next-assets/nipa-swing.webp" alt=""></div>
+  </div>
   <div class="get-copy">
     <p class="kicker" data-reveal>下载</p>
-    <h2 data-reveal style="--i:1">装上 NipaPlay Next</h2>
+    <h2 data-reveal style="--i:1"><small>装上</small>NipaPlay <em>Next</em></h2>
     <p class="ver" data-reveal style="--i:2">2.0.0-alpha.3　开发者预览</p>
     <div class="cta" data-reveal style="--i:3">
       <a class="btn pink" href="https://github.com/AimesSoft/NipaPlay-Reload/releases/tag/v2.0.0-alpha.3">下载 Alpha 3</a>

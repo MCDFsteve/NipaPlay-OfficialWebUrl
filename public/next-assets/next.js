@@ -7,7 +7,14 @@
 
   /* —— 导航背景 —— */
   const nav = $('#nav');
-  const onScrollNav = () => nav.classList.toggle('solid', scrollY > 40);
+  // 当前读到哪一节，导航里对应的那一项亮起
+  const navLinks = $$('#nav nav a').map((a) => [a, $(a.getAttribute('href'))]).filter(([, s]) => s);
+  const onScrollNav = () => {
+    nav.classList.toggle('solid', scrollY > 40);
+    let on = null;
+    for (const [a, s] of navLinks) if (s.getBoundingClientRect().top <= innerHeight * 0.4) on = a;
+    for (const [a] of navLinks) a.classList.toggle('on', a === on);
+  };
 
   /* —— 1440×900 画面按容器宽度缩放 —— */
   function fit() {
@@ -134,7 +141,7 @@
 
   /* —— 设备：组网 → 说 → 播放 —— */
   const devices = (() => {
-    const sec = $('#devices'), pulse = $('.pulse', sec), phAsk = $('.ph-ask em', sec);
+    const sec = $('#devices'), pulse = $('.pulse', sec), phAsk = $('.pm-input em', sec);
     const trail = $$('.trail circle', sec), rMac = $('.r-mac', sec), rTv = $('.r-tv', sec), rSrv = $('.r-srv', sec);
     const pMacSrv = $('#m-mac-srv');
     const ripple = (el) => { el.classList.remove('go'); void el.getBoundingClientRect(); el.classList.add('go'); };
@@ -154,23 +161,25 @@
       });
       if (k >= 1) { hist = []; end && end(); }
     });
-    function base() { tl.cancel(); sec.classList.remove('think', 'on-tv', 'busy', 'toast'); pulse.style.opacity = 0; trail.forEach((c) => (c.style.opacity = 0)); hist = []; phAsk.textContent = ''; }
+    function base() { tl.cancel(); sec.classList.remove('think', 'on-tv', 'busy', 'toast', 'sent'); pulse.style.opacity = 0; trail.forEach((c) => (c.style.opacity = 0)); hist = []; phAsk.textContent = ''; }
     const steps = [
       () => { base(); sec.classList.add('lit'); },
       (instant) => {
         base(); sec.classList.add('lit');
-        if (instant) { phAsk.textContent = phAsk.dataset.text; return; }
+        if (instant) { sec.classList.add('sent'); return; }
+        // 在手机的对话里打字、发出，消息经组网到书房的电脑
         tl.tween(300, 1200, (k) => typeInto(phAsk, k));
-        travel(pPhMac, 1700, 1000, () => { ripple(rMac); sec.classList.add('think'); });
+        tl.at(1650, () => { phAsk.textContent = ''; sec.classList.add('sent'); });
+        travel(pPhMac, 1800, 1000, () => { ripple(rMac); sec.classList.add('think'); });
       },
       (instant) => {
-        base(); sec.classList.add('lit'); phAsk.textContent = phAsk.dataset.text;
+        base(); sec.classList.add('lit', 'sent');
         if (instant) { sec.classList.add('on-tv'); return; }
         sec.classList.add('think');
         travel(pMacTv, 200, 1000, () => { ripple(rTv); sec.classList.remove('think'); sec.classList.add('on-tv'); });
       },
       (instant) => {
-        base(); sec.classList.add('lit', 'on-tv'); phAsk.textContent = phAsk.dataset.text;
+        base(); sec.classList.add('lit', 'on-tv', 'sent');
         if (instant) { sec.classList.add('toast'); return; }
         // 书房的梨花把下载交给服务器上的梨花，做完再回报
         sec.classList.add('think');

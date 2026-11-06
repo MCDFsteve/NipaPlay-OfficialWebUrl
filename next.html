@@ -13,9 +13,11 @@
 <body>
 
 <header id="nav">
-  <a class="brand" href="/" aria-label="NipaPlay 首页"><img src="/assets/icon.webp" alt=""><span>NipaPlay</span><em>Next</em></a>
-  <nav><a href="#how">工作方式</a><a href="#library">媒体库</a><a href="#devices">设备</a><a href="#arch">架构</a><a href="#home">Harness</a><a href="#open">开放</a></nav>
-  <a class="nav-get" href="#get">下载</a>
+  <div class="nav-in">
+    <a class="brand" href="/" aria-label="NipaPlay Next"><img src="/assets/icon.webp" alt=""><span>NipaPlay</span><em>Next</em></a>
+    <nav><a href="#how">工作方式</a><a href="#library">媒体库</a><a href="#devices">设备</a><a href="#arch">架构</a><a href="#home"><span class="lat">Harness</span></a><a href="#open">开放</a></nav>
+    <a class="nav-get" href="#get">下载</a>
+  </div>
 </header>
 
 <main>
@@ -63,17 +65,53 @@
     </div>
   </div>
     <div class="iphone" aria-hidden="true">
+      <i class="ip-key k-action"></i><i class="ip-key k-up"></i><i class="ip-key k-down"></i><i class="ip-key k-side"></i><i class="ip-key k-cam"></i>
       <div class="iscr"><div class="scaler" data-w="402" data-h="874"><div class="ph">
-        <i class="ph-island"></i>
-        <p class="ph-status"><span>9:41</span><span>▂▄▆ ▭</span></p>
-        <div class="ph-hero"><img src="/next-assets/bd-yani.webp" alt="">
-          <div class="ph-copy"><img class="logo" src="/next-assets/logo-yani.webp" alt=""><p class="ph-meta"><b>★ 8.2</b> · 2026 · 喜剧 · 12 集</p><span class="ph-play">▶　播放 第 1 集</span></div>
+        <div class="ph-page">
+          <div class="ph-hero">
+            <img class="ph-bd" src="/next-assets/bd-madoka.webp" alt="">
+            <div class="ph-copy">
+              <img class="logo" src="/next-assets/logo-madoka.webp" alt="">
+              <p class="ph-meta"><b>★ 7.8</b><i>·</i>2013<i>·</i>悬疑 · 动画<i>·</i>1 小时 56 分</p>
+              <p class="ph-ov">宁静祥和的见泷原市，全靠魔法少女们守护。这一天，晓美焰作为转校生来到小圆的班级，却对周遭无时不在的违和感隐隐不安……</p>
+              <div class="ph-btns"><span class="ph-play"><svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z"/></svg>播放</span><span class="ph-ghost">详情</span></div>
+            </div>
+          </div>
+          <p class="ph-h3">继续观看</p>
+          <div class="ph-row">
+            <figure><img src="/next-assets/still-gakusei-4.webp" alt=""><figcaption><b>学生会也有洞！</b><span>第 5 集 · 还要 14 分钟</span></figcaption><u style="--w:42%"></u></figure>
+            <figure><img src="/next-assets/still-anbu-4.webp" alt=""><figcaption><b>某暗部的少女共栖</b><span>第 4 集 · 还要 3 分钟</span></figcaption><u style="--w:88%"></u></figure>
+          </div>
+          <p class="ph-h3">最近添加</p>
+          <div class="ph-row">
+            <figure><img src="/next-assets/still-yani-1.webp" alt=""></figure>
+            <figure><img src="/next-assets/still-witch-3.webp" alt=""></figure>
+          </div>
         </div>
-        <p class="ph-h3">继续观看</p>
-        <div class="ph-row"><img src="/next-assets/still-gakusei-4.webp" alt=""><img src="/next-assets/still-anbu-4.webp" alt=""></div>
+        <i class="ph-island"></i>
+        <div class="ph-status">
+          <span class="ph-time">9:41</span>
+          <span class="ph-sys">
+            <svg class="sig" viewBox="0 0 18 12"><rect x="0" y="7.6" width="3.1" height="4.4" rx="1"/><rect x="4.9" y="5.2" width="3.1" height="6.8" rx="1"/><rect x="9.8" y="2.6" width="3.1" height="9.4" rx="1"/><rect x="14.7" y="0" width="3.1" height="12" rx="1"/></svg>
+            <svg class="wifi" viewBox="0 0 16 12"><path d="M8 2.3c2.4 0 4.6.9 6.2 2.5l1.3-1.3A10.6 10.6 0 0 0 8 .4 10.6 10.6 0 0 0 .5 3.5l1.3 1.3A8.8 8.8 0 0 1 8 2.3zm0 3.5c1.4 0 2.7.6 3.7 1.5l1.3-1.3A7 7 0 0 0 8 3.9 7 7 0 0 0 3 6l1.3 1.3c1-1 2.3-1.5 3.7-1.5zm0 3.4c.5 0 1 .2 1.3.5L8 11.5 6.7 9.7c.3-.3.8-.5 1.3-.5z"/></svg>
+            <svg class="bat" viewBox="0 0 28 13"><rect x=".6" y=".6" width="23.6" height="11.8" rx="3.8" fill="none" stroke="#fff" stroke-opacity=".38" stroke-width="1.1"/><rect x="2.3" y="2.3" width="18.4" height="8.4" rx="2.2"/><path d="M25.6 4.4v4.2c.9-.3 1.5-1.1 1.5-2.1s-.6-1.8-1.5-2.1z" fill-opacity=".45"/></svg>
+          </span>
+        </div>
+        <div class="ph-top">
+          <span class="ph-tasks glass"><i class="wg"><b></b><b></b><b></b></i><em>4</em></span>
+          <span class="ph-more glass"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.9"/><circle cx="12" cy="12" r="1.9"/><circle cx="19" cy="12" r="1.9"/></svg></span>
+        </div>
         <div class="ph-dock">
-          <div class="ph-acc"><img src="/next-assets/nipa-avatar.webp" alt=""><span>今天想看什么？</span><i></i></div>
-          <div class="ph-tabs"><div class="ph-bar"><b class="on"></b><b></b><b></b><b></b></div><span class="ph-search"></span></div>
+          <div class="ph-line glass"><img src="/next-assets/nipa-avatar.webp" alt=""><i class="dot"></i><span>正在准备《尼古喵喵》</span><span class="mic"><svg viewBox="0 0 24 24"><rect x="9" y="3.5" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3"/></svg></span></div>
+          <div class="ph-tabs">
+            <div class="ph-bar glass">
+              <span class="on"><svg viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5V19q0 1-1 1h-4.5v-5.5h-5V20H5q-1 0-1-1z"/></svg><em>首页</em></span>
+              <span><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg><em>发现</em></span>
+              <span><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="9" rx="1.6"/><rect x="13.5" y="4" width="6.5" height="9" rx="1.6"/><rect x="4" y="15.5" width="16" height="4.5" rx="1.6"/></svg><em>媒体库</em></span>
+              <span><svg viewBox="0 0 24 24"><path d="M3.5 12h4L10 6l4 12 2.5-6h4"/></svg><em>动态</em></span>
+            </div>
+            <span class="ph-search glass"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></span>
+          </div>
         </div>
       </div></div></div>
     </div>
@@ -255,13 +293,23 @@
           </div>
           <div class="dev srv" style="--i:2"><i class="led"></i><i class="led"></i><i class="led"></i></div>
           <div class="dev phone" style="--i:3">
-            <div class="scr">
-              <div class="ph-grid">
-                <img src="/next-assets/poster-gakusei.webp" alt=""><img src="/next-assets/poster-yani.webp" alt=""><img src="/next-assets/poster-anbu.webp" alt="">
-                <img src="/next-assets/poster-witch.webp" alt=""><img src="/next-assets/poster-smoke.webp" alt=""><img src="/next-assets/poster-madoka.webp" alt="">
+            <div class="scr"><div class="pm">
+              <div class="pm-back"><img src="/next-assets/poster-gakusei.webp" alt=""><img src="/next-assets/poster-yani.webp" alt=""><img src="/next-assets/poster-anbu.webp" alt=""></div>
+              <i class="pm-island"></i>
+              <p class="pm-status"><span>9:41</span><svg viewBox="0 0 18 12"><rect x="0" y="7.6" width="3.1" height="4.4" rx="1"/><rect x="4.9" y="5.2" width="3.1" height="6.8" rx="1"/><rect x="9.8" y="2.6" width="3.1" height="9.4" rx="1"/><rect x="14.7" y="0" width="3.1" height="12" rx="1"/></svg><svg viewBox="0 0 28 13"><rect x=".6" y=".6" width="23.6" height="11.8" rx="3.8" fill="none" stroke="#fff" stroke-opacity=".38" stroke-width="1.1"/><rect x="2.3" y="2.3" width="18.4" height="8.4" rx="2.2"/></svg></p>
+              <div class="pm-sheet">
+                <i class="pm-grab"></i>
+                <div class="pm-head"><img src="/next-assets/nipa-avatar.webp" alt=""><p><b>梨花</b><small><i></i>在书房的电脑上</small></p><span class="pm-x"><svg viewBox="0 0 24 24"><path d="M7 7l10 10M17 7 7 17"/></svg></span></div>
+                <div class="pm-thread">
+                  <p class="pm-you old">迷宫饭更新了吗？</p>
+                  <p class="pm-nipa old">更新了，第 18 集已经在媒体库里。</p>
+                  <p class="pm-you new">在客厅电视上放第 5 集</p>
+                  <p class="pm-think"><i></i><i></i><i></i></p>
+                  <p class="pm-nipa reply">好，客厅电视开始放《学生会也有洞！》第 5 集了。</p>
+                </div>
+                <div class="pm-composer"><span class="pm-input"><em data-text="在客厅电视上放第 5 集"></em></span><i class="pm-mic"><svg viewBox="0 0 24 24"><rect x="9" y="3.5" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3"/></svg></i></div>
               </div>
-              <span class="ph-ask"><img src="/next-assets/nipa-avatar.webp" alt=""><em data-text="在客厅电视上放第 5 集"></em></span>
-            </div>
+            </div></div>
           </div>
           <p class="tag t-tv" style="--i:0"><small>客厅</small><b>电视</b></p>
           <p class="tag t-mac" style="--i:1"><small>书房</small><b>电脑<i class="dot"></i>梨花在这里</b></p>
@@ -290,32 +338,32 @@
       <p class="kicker">架构</p>
       <h2 class="sec-h">一层一层，<br>看她怎么工作。</h2>
       <ol class="step-list">
-        <li data-s="0"><span class="num">01</span><h3>同一套能力</h3><p>NipaPlay 的每个功能都是一个能力：播放、找片、下载、补资料、配弹幕、管设备，38 类共 330 个。你点的按钮和梨花的调用走同一套，界面能做的她都能做。</p></li>
-        <li data-s="1"><span class="num">02</span><h3>身体</h3><p>Erika 播放内核、媒体库、下载器、弹幕、字幕和组网。没有梨花它们也照常工作；任务在后台跑，关掉对话也不会停。</p></li>
-        <li data-s="2"><span class="num">03</span><h3>大脑与家</h3><p>梨花运行在 DeepSeek Harness 上，也可以换成 Codex，模型填你自己的接口。她的规矩、记忆和工具放在一个 Git 仓库里，就在最底下。</p></li>
+        <li data-s="0"><span class="num">01</span><h3>能力层</h3><p>NipaPlay 的每个功能都注册为一项能力：播放、检索、下载、元数据、弹幕、设备管理，共 38 类 330 项。界面和智能体调用同一套能力，界面能做的，梨花都能做。</p></li>
+        <li data-s="1"><span class="num">02</span><h3>服务层</h3><p>能力由服务层执行：Erika 播放内核、媒体库、下载器、弹幕、字幕和组网。服务层不依赖智能体；任务在后台执行，关闭对话不会中断。</p></li>
+        <li data-s="2"><span class="num">03</span><h3>智能体与 Harness</h3><p>梨花运行在 DeepSeek Harness 上，也可换用 Codex，模型接入你自己的 API。她的指令、记忆、工具和钩子在最底层的 Harness 里，一个 Git 仓库。</p></li>
       </ol>
     </div>
     <div class="step-visual">
       <div class="iso-wrap" aria-hidden="true">
         <div class="iso">
           <div class="plate p-home" style="--k:0">
-            <p class="pl-label"><b>她的家</b><small>HARNESS · GIT</small></p>
+            <p class="pl-label"><b class="lat">Harness</b><small>GIT REPOSITORY</small></p>
             <ul class="pl-tree"><li>AGENTS.md</li><li>memory/</li><li>tools/</li><li>hooks/</li><li>schedules.json</li><li>nipa</li></ul>
             <i class="pl-dot d-home"></i>
           </div>
           <div class="plate p-body" style="--k:1">
-            <p class="pl-label"><b>身体</b><small>NIPAPLAY</small></p>
+            <p class="pl-label"><b>服务层</b><small>SERVICES</small></p>
             <span class="erika-hit">Erika 播放内核</span>
-            <div class="pl-chips body-chips"><span>媒体库</span><span>下载器</span><span>弹幕</span><span>字幕</span><span>组网</span><span>任务</span></div>
+            <div class="pl-chips body-chips"><span>媒体库</span><span>下载器</span><span>弹幕</span><span>字幕</span><span>组网</span><span>任务调度</span></div>
           </div>
           <div class="plate p-cap" style="--k:2">
-            <p class="pl-label"><b>能力层</b><small>330 CAPABILITIES</small></p>
+            <p class="pl-label"><b>能力层</b><small>CAPABILITIES · 330</small></p>
             <div class="pl-caps"><span>media.library.search</span><span>download.add</span><span>danmaku.import</span><span>media.identity.bind_batch</span><span>mesh.devices</span><span>settings.set</span></div>
             <span class="cap-hit">playback.open</span>
           </div>
           <div class="plate p-top" style="--k:3">
-            <div class="half h-ui"><p class="pl-label"><b>界面</b><small>YOU</small></p><div class="mini-posters"><i></i><i></i><i></i></div><span class="ui-play">▶ 播放</span></div>
-            <div class="half h-nipa"><p class="pl-label"><b>梨花</b><small>AGENT</small></p><img class="nipa-face" src="/next-assets/nipa-avatar.webp" alt=""><span class="nipa-call">nipa call playback.open</span><div class="models"><span>DeepSeek Harness</span><span>Codex</span><span>你的模型</span></div></div>
+            <div class="half h-ui"><p class="pl-label"><b>界面</b><small>UI</small></p><div class="mini-posters"><i></i><i></i><i></i></div><span class="ui-play">▶ 播放</span></div>
+            <div class="half h-nipa"><p class="pl-label"><b>智能体</b><small>AGENT</small></p><img class="nipa-face" src="/next-assets/nipa-avatar.webp" alt=""><span class="nipa-call">nipa call playback.open</span><div class="models"><span>DeepSeek Harness</span><span>Codex</span><span>你的模型</span></div></div>
             <i class="beam b-ui"></i><i class="beam b-nipa"></i><i class="beam b-home"></i>
           </div>
           <i class="beam b-down" style="--k:2"></i>

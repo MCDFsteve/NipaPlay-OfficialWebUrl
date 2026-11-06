@@ -101,6 +101,11 @@
         if (instant) { ask.textContent = ask.dataset.text; return; }
         tl.tween(350, 1300, (k) => typeInto(ask, k));
         tl.at(2100, () => { ask.textContent = ''; sent(); });
+        // 发出去之后她马上开始想，画面不停在半路
+        tl.at(2500, () => {
+          app.classList.add('running'); on(think, true);
+          let n = 1; secTimer = setInterval(() => { secs.textContent = `${++n}s`; }, 1000);
+        });
       },
       (instant) => {
         base(); sent();
@@ -187,7 +192,7 @@
   }
 
   // 海报带：内容复制一份，循环无缝
-  $$('.mq-row').forEach((row) => { row.innerHTML += row.innerHTML; });
+  $$('.mq-row, .dmb-row').forEach((row) => { row.innerHTML += row.innerHTML; });
 
   let queued = false;
   const frame = () => { queued = false; onScrollNav(); updateSteps(); };

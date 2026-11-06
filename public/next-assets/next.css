@@ -511,6 +511,7 @@ h1.letters .next .ch { text-shadow: 0 0 46px rgba(255,46,85,.38); }
   .dmb-row { font-size: 48px; }
   .get-art { width: 86%; margin: 0 auto; }
   #get { grid-template-columns: 1fr; text-align: left; }
+  .get-art .swing { width: auto; margin: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
   .hl-in, h1.letters .ch { transform: none !important; opacity: 1 !important; filter: none !important; transition: none !important; }
